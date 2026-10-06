@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>生命远征 · 数值调参台</title>
+  <link rel="stylesheet" href="./tuning.css">
+</head>
+<body>
+  <header class="masthead">
+    <a class="brand" href="#"><span class="brand-mark" aria-hidden="true">芽</span><span>小小推球家<small>生命远征 / BALANCE LAB</small></span></a>
+    <div class="header-note">离线配置工作台 <span class="pill">本地草稿 · 不自动同步</span></div>
+    <a class="game-link" href="./小小推球家-生命远征.html" target="_blank" rel="noopener">打开游戏 ↗</a>
+  </header>
+  <main>
+    <section class="hero">
+      <div><p class="eyebrow">观察 · 假设 · 改动 · 试玩</p><h1>让每一次远征，<br>都有自己的节奏。</h1><p class="hero-copy">在表格里练习数值，在固定种子的新局里检验假设。<br>不替你推荐答案，只把规则与代价摊开。</p></div>
+      <aside class="workflow"><h2>一次完整的调参实验</h2><ol><li><b>改</b><span>选择字段，每次只改 1–2 项</span></li><li><b>验</b><span>校验草稿，下载完整配置 JSON</span></li><li><b>导</b><span>游戏「我的巢穴」导入配置</span></li><li><b>对</b><span>对照两边的 revision</span></li><li><b>玩</b><span>开启新局，用固定 seed 对比</span></li></ol><p>不同浏览器、file:// 路径的存储可能隔离。必须下载 JSON 再到游戏营地导入；这里无法确认游戏已应用。</p></aside>
+    </section>
+    <section class="metrics" aria-label="草稿核心测算">
+      <article class="metric"><span>01 / 零永久升级采集需求</span><strong id="metricPickups">—</strong><small id="metricPickupsNote">普通 + 金色，采集者，无构筑、零基因</small></article>
+      <article class="metric"><span>02 / 全程交付次数</span><strong id="metricDeliveries">—</strong><small>三个阶段的 count 之和</small></article>
+      <article class="metric"><span>03 / 初始倒计时 · active 硬上限</span><strong id="metricTime">—</strong><small>剩余时间上限不等于累计时长上限</small></article>
+      <article class="metric"><span>04 / 四项巢穴买满总粮食</span><strong id="metricFood">—</strong><small>毛成本；净成本、预计局数见长线实验</small></article>
+    </section>
+    <section class="workbench" aria-labelledby="workbenchTitle">
+      <div class="workbench-heading"><div><p class="eyebrow">CONFIGURATION DESK</p><h2 id="workbenchTitle">数值工作台</h2></div><div class="state-badges"><span class="pill">偏离默认 <b id="changedCount">0</b> 项</span><span class="pill" id="pendingCount">与本页快照相同</span></div></div>
+      <div class="toolbar">
+        <button id="validateBtn" class="primary" type="button">校验草稿</button>
+        <button id="exportConfigBtn" type="button">导出配置 JSON</button>
+        <label class="button" for="importConfigInput">导入配置 JSON<input id="importConfigInput" type="file" accept=".json,application/json"></label>
+        <button id="exportReportBtn" type="button">导出数值汇总</button>
+        <button id="resetAllBtn" class="quiet" type="button">恢复全部默认</button>
+      </div>
+      <div class="state-panel"><p id="status" role="status" aria-live="polite">模块正在加载。若直接 file:// 打开源文件被浏览器阻止，请使用主层打包后的「数值调参台.html」，或本地静态服务。</p><p id="revision">草稿 revision — / applied — / 游戏实际状态未知</p><p id="storageStatus">独立缓存 dung-tuning-draft-v1；不读取或写入游戏配置缓存。</p></div>
+      <div class="tabs" role="tablist" aria-label="工作区"><button id="fieldsTab" type="button" role="tab" aria-selected="true" aria-controls="fieldsPanel" tabindex="0">全部配置</button><button id="experimentTab" type="button" role="tab" aria-selected="false" aria-controls="experimentPanel" tabindex="-1">节奏与长线实验</button><button id="systemsTab" type="button" role="tab" aria-selected="false" aria-controls="systemsPanel" tabindex="-1">系统与成就</button></div>
+      <section id="fieldsPanel" role="tabpanel" aria-labelledby="fieldsTab">
+        <div class="editor-layout"><aside class="group-sidebar"><h3>字段分组</h3><nav id="groupNav" aria-label="配置分组"></nav><p>估算字段独立分组，不影响游戏规则。默认值仅兼容旧规则，并非已验证的平衡结论。</p></aside><div class="table-pane"><div class="searchbar"><label for="searchInput">查找参数</label><input id="searchInput" type="search" placeholder="搜索 key、中文名、说明…" autocomplete="off"><label class="changed-filter"><input id="onlyChanged" type="checkbox">仅看已改</label><span id="visibleCount"></span></div><div class="table-scroll" tabindex="0" role="region" aria-label="配置字段表，可横向滚动"><table id="configTable"><caption class="sr-only">全部配置：当前草稿支持编辑，默认值可逐行恢复</caption><thead><tr><th scope="col">字段 key</th><th scope="col">中文名</th><th scope="col">当前可编辑值</th><th scope="col">默认值</th><th scope="col">单位</th><th scope="col">范围</th><th scope="col">说明与影响</th><th scope="col">操作</th></tr></thead><tbody id="configRows"></tbody></table></div><p id="emptyState" class="empty" hidden>没有匹配字段。试试清空搜索或切换分组。</p><p class="table-footnote">暖黄色 = 偏离默认；红色 = 非法输入。空白保留为空白，不会自动变成 0。跨字段校验错误见顶部状态。</p></div></div>
+      </section>
+      <section id="experimentPanel" role="tabpanel" aria-labelledby="experimentTab" hidden><div class="panel-content"><div class="section-intro"><h3>节奏实验区</h3><p>基于当前合法草稿即时计算。无构筑、零永久升级、零基因、采集者、难度 0 的静态估算；不是 Monte Carlo，也不是平衡验证。</p></div><div id="experimentContent"></div><div class="section-intro"><h3>三个小实验，不提供推荐预设</h3><p>先写假设 → 只改 1–2 个字段 → 固定 seed 测试 → 记录结果再决定。</p></div><div class="learning-grid"><article><span class="card-index">实验 01</span><h4>分清两种时间</h4><p>假设：提高初始倒计时会增加容错，但不会突破 active 硬上限。</p><code>run.baseTime / run.hardLimit</code><p>记录实际活跃时长、续时次数与失败原因；保持 baseTime ≤ timeCap。</p></article><article><span class="card-index">实验 02</span><h4>球更大，还是交付更多？</h4><p>假设：相近采集量下，额外交付会增加移动负担。</p><code>stage.0.count / stage.0.mass</code><p>固定种子，记录采集次数、交付次数及绕行距离，不只看胜负。</p></article><article><span class="card-index">实验 03</span><h4>奖励与永久成长</h4><p>假设：早期价格和成就门槛会改变第一次购买时点。</p><code>upgrade.shell.cost1 / achievements.first_win.target</code><p>记录结算净收益、领奖时点和购买局数。成就参数为 PLACEHOLDER，待试玩。</p></article></div></div></section>
+      <section id="systemsPanel" role="tabpanel" aria-labelledby="systemsTab" hidden><div class="panel-content"><div class="section-intro"><h3>成就观察簿</h3><p>六项新系统参数均为 PLACEHOLDER，待试玩。展示条件与奖励，不宣称已测试平衡；每项成就只可领取一次。</p></div><div id="achievementCards" class="achievement-grid"></div><div class="section-intro"><h3>完整系统速览</h3><p>以下摘要读取当前草稿字段；完整 key 与规则影响可在配置表查询。</p></div><div id="systemSummary" class="system-grid"></div><article class="resource-note"><h4>资源来源 / 消耗（source / sink）</h4><p>口粮来源：普通与金色采集先入背包；交付将背包与质量折粮入库；胜利结算奖励、失败或撤退保留、遗物、即时口粮、一次性成就。口粮消耗：四项巢穴永久升级；未保留背包在失败或撤退时损失。</p><p>基因来源：胜利基础奖励 + 难度奖励、一次性成就；消耗：基因等级购买。后代来自胜利结算，只作为特质解锁门槛，不因解锁消耗。分数用于结算记录，不是购买货币。</p><p>本页的平均每局口粮是已经结算、含成败的净收益假设，不再乘成功率；成就奖励与既有存档资源均不计入长线局数。</p><p><strong>两处值得练习的现有设计问题：</strong>永久升级买满后，粮食和基因缺少持续消耗，继续增加奖励不会自动产生长线目标。基因只给首球香气，而默认储粮阶段香气门槛为 0，交付又会清空香气，所以默认传承对达成目标几乎没有帮助；可以先调整储粮香气门槛做对照实验，但这也会增加早期负担。它们是本版明确保留、供你调优的设计问题，不代表已经平衡。</p></article></div></section>
+    </section>
+    <footer><span>生命远征 / 数值练习场</span><span>规则是起点，试玩才是证据。</span></footer>
+  </main>
+  <noscript><p class="noscript">请启用 JavaScript 后使用配置编辑、校验与导出功能。</p></noscript>
+  <script type="module" src="./tuning.js"></script>
+</body>
+</html>

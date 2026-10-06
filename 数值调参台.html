@@ -1,0 +1,715 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>生命远征 · 数值调参台</title>
+  <style>@charset "UTF-8";
+:root{--paper:#f6f4ec;--surface:#fffef9;--forest:#234f3c;--forest-dark:#183c2d;--sage:#e7eee2;--ink:#253b30;--muted:#667367;--line:#dedfd2;--amber:#fff0cc;--danger:#963d33;--danger-bg:#fff0eb;--radius:18px;--shadow:0 8px 28px #283e2f06;font-family:"Segoe UI","Microsoft YaHei",system-ui,sans-serif;color:var(--ink);background:var(--paper);font-synthesis:none}
+*{box-sizing:border-box}body{margin:0}a{color:var(--forest);text-underline-offset:4px}button,input{font:inherit}button,.button{border:1px solid #cbd4c5;background:var(--surface);color:var(--forest);border-radius:9px;padding:10px 15px;cursor:pointer;font-size:13px;font-weight:600;display:inline-flex;align-items:center;justify-content:center;gap:6px;text-decoration:none;line-height:1.5}button:hover,.button:hover{background:var(--sage);border-color:var(--forest)}button:disabled{opacity:.48;cursor:not-allowed}button.primary{background:var(--forest);border-color:var(--forest);color:#fffef6}button.primary:hover{background:var(--forest-dark)}button.quiet{color:var(--muted);background:transparent}input{color:var(--ink)}input:focus-visible,button:focus-visible,a:focus-visible,.table-scroll:focus-visible{outline:3px solid #92b592;outline-offset:3px}input[type=checkbox]{accent-color:var(--forest)}[hidden]{display:none!important}
+h1,h2,h3,h4,p{margin:0}h2{font-size:24px;letter-spacing:-.5px}h3{font-size:20px}h4{font-size:16px}p{line-height:1.8}small{line-height:1.6}code{font-family:Consolas,"Courier New",monospace;overflow-wrap:anywhere}.masthead{max-width:1600px;padding:23px 42px;margin:auto;display:flex;align-items:center;gap:25px;border-bottom:1px solid var(--line)}.brand{display:flex;align-items:center;gap:12px;text-decoration:none;font-weight:750;letter-spacing:1px}.brand-mark{width:43px;height:43px;border-radius:14px 14px 14px 3px;background:var(--forest);color:#f7edce;display:grid;place-items:center;font-size:21px}.brand small{display:block;font-size:10px;font-weight:500;letter-spacing:1.5px;color:var(--muted)}.header-note{margin-left:auto;display:flex;gap:16px;align-items:center;color:var(--muted);font-size:12px}.pill{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:#fbfcf6;border-radius:30px;padding:6px 12px;font-size:12px;line-height:1.5}.game-link{font-size:13px;font-weight:650;white-space:nowrap}main{max-width:1600px;margin:auto;padding:0 42px}.hero{display:grid;grid-template-columns:1.2fr 1fr;align-items:center;gap:60px;padding:48px 0 35px}.eyebrow{color:#738466;font-size:11px;letter-spacing:2px;font-weight:750;margin-bottom:11px}h1{font-family:Georgia,"Songti SC","SimSun",serif;font-size:clamp(33px,3.2vw,51px);font-weight:600;line-height:1.3;letter-spacing:1px}.hero-copy{font-size:14px;color:var(--muted);margin-top:19px}.workflow{padding:22px 25px;background:var(--sage);border-radius:var(--radius);border:1px solid #d6dfce}.workflow h2{font-size:16px;letter-spacing:0}.workflow ol{list-style:none;padding:0;margin:16px 0;display:grid;grid-template-columns:1fr 1fr;gap:12px}.workflow li{display:flex;align-items:center;gap:9px;font-size:12px}.workflow li b{flex-shrink:0;display:grid;place-items:center;background:#fffdf5;color:var(--forest);border-radius:50%;height:25px;width:25px}.workflow p{font-size:12px;color:#51684e;border-top:1px solid #cfdbc7;padding-top:11px}.metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-bottom:32px}.metric{background:var(--surface);border:1px solid var(--line);border-radius:13px;padding:20px;box-shadow:var(--shadow)}.metric>span{font-size:11px;color:var(--muted);letter-spacing:.3px}.metric strong{display:block;font-size:clamp(20px,2vw,29px);font-weight:650;color:var(--forest);margin:14px 0 7px;overflow-wrap:anywhere;font-variant-numeric:tabular-nums}.metric small{display:block;font-size:11px;color:var(--muted)}.workbench{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow)}.workbench-heading{padding:25px 26px 18px;display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap}.workbench-heading .eyebrow{font-size:10px;margin-bottom:5px}.state-badges{display:flex;gap:8px;flex-wrap:wrap}.toolbar{padding:0 26px 18px;display:flex;gap:8px;flex-wrap:wrap}.toolbar .button{position:relative}.toolbar input[type=file]{position:absolute;inset:0;opacity:0;width:100%;cursor:pointer}.toolbar .button:focus-within{outline:3px solid #92b592;outline-offset:3px}.state-panel{margin:0 26px 21px;padding:13px 16px;border-left:3px solid #8caa83;background:#f0f3e9;border-radius:0 8px 8px 0;font-size:12px;overflow-wrap:anywhere}.state-panel p+p{margin-top:4px;color:var(--muted)}#status[data-tone=error],#storageStatus[data-tone=error]{color:var(--danger)}#status[data-tone=success]{color:var(--forest)}#revision{font-family:Consolas,"Microsoft YaHei",monospace;font-size:11px}.tabs{display:flex;gap:20px;padding:0 26px;border-bottom:1px solid var(--line);overflow-x:auto}.tabs button{border:0;border-radius:0;background:none;padding:13px 2px 14px;color:var(--muted);white-space:nowrap;border-bottom:3px solid transparent}.tabs button[aria-selected=true]{border-bottom-color:var(--forest);color:var(--forest)}.editor-layout{display:grid;grid-template-columns:172px minmax(0,1fr)}.group-sidebar{padding:21px 13px;background:#f8f9f1;border-right:1px solid var(--line)}.group-sidebar h3{font-size:11px;color:var(--muted);padding:0 11px 12px;font-weight:500}.group-sidebar nav{display:flex;flex-direction:column;gap:3px}.group-sidebar button{border:0;text-align:left;justify-content:space-between;background:transparent;font-size:12px;font-weight:500;padding:8px 10px}.group-sidebar button[aria-pressed=true]{background:var(--forest);color:#fffef6}.nav-count{opacity:.65;font-size:10px;font-variant-numeric:tabular-nums}.group-sidebar>p{font-size:11px;color:var(--muted);padding:15px 10px}.table-pane{min-width:0}.searchbar{display:flex;align-items:center;gap:12px;padding:19px 20px;flex-wrap:wrap}.searchbar>label:first-child{font-size:12px;font-weight:650}.searchbar input[type=search]{background:#fff;border:1px solid var(--line);border-radius:8px;padding:9px 12px;width:290px;max-width:100%;font-size:12px;min-width:0}.changed-filter{display:flex;gap:5px;align-items:center;font-size:12px;white-space:nowrap}#visibleCount{margin-left:auto;font-size:11px;color:var(--muted)}.table-scroll{overflow:auto;max-height:740px;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}table{width:100%;border-collapse:separate;border-spacing:0;font-size:12px;min-width:1120px}thead{position:sticky;top:0;z-index:1}th{font-size:11px;text-align:left;color:#62715b;font-weight:650;background:#eff2e7;padding:13px 12px;border-bottom:1px solid var(--line);white-space:nowrap}td{padding:14px 12px;border-bottom:1px solid #eaede3;vertical-align:top;line-height:1.6}tbody tr:nth-child(even){background:#fbfcf7}tbody tr:hover{background:#f0f4e9}tbody tr.is-changed{background:#fff8e9}tbody tr.is-changed td:first-child{box-shadow:inset 3px 0 #d1a553}tbody tr.is-invalid{background:var(--danger-bg)}tbody tr.is-invalid td:first-child{box-shadow:inset 3px 0 var(--danger)}.key-cell{min-width:200px;font-size:11px;color:#596f5c}.field-label{min-width:126px;font-weight:600}.field-editor{width:120px;padding:8px 9px;border:1px solid #ced8c7;border-radius:6px;background:#fffefb;font-family:Consolas,monospace;font-size:13px;font-variant-numeric:tabular-nums}.is-changed .field-editor{border-color:#cbb078;background:#fffdf6}.is-invalid .field-editor{border-color:var(--danger);background:#fff8f5;color:var(--danger)}.field-error{display:block;color:var(--danger);font-size:10px;max-width:150px;margin-top:5px}.default-cell{font-variant-numeric:tabular-nums;color:var(--muted)}.range-cell{white-space:nowrap;font-size:11px;color:var(--muted)}.help-cell{min-width:255px;max-width:340px;font-size:11px;color:#6a7366}.help-cell small{display:block;color:#485f4b;margin-top:4px}.row-reset{padding:5px 9px;font-size:11px;white-space:nowrap}.empty{padding:35px;text-align:center;color:var(--muted)}.table-footnote{padding:13px 20px;font-size:11px;color:var(--muted)}.panel-content{padding:26px}.section-intro{margin-bottom:20px}.section-intro p{margin-top:8px;font-size:13px;color:var(--muted)}.experiment-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:17px;margin-bottom:30px}.experiment-card{background:#f8f9f2;border:1px solid var(--line);border-radius:12px;padding:20px;min-width:0}.experiment-card h4{margin-bottom:13px}.experiment-card p{font-size:12px;color:#56684f;margin-top:9px}.experiment-card .big-result{font-size:28px;color:var(--forest);font-weight:650;margin:14px 0}.formula{display:block;white-space:pre-wrap;background:#ebefdf;padding:12px;border-radius:7px;font-size:11px;line-height:1.9;color:#3d563a;margin:13px 0}.mini-table{min-width:0;font-size:11px;margin:10px 0}.mini-table td,.mini-table th{padding:9px 7px}.mini-table th{white-space:normal}.mini-table thead{position:static}.experiment-card .mini-scroll{overflow-x:auto}.experiment-card .mini-table{min-width:380px}.warning-box{padding:16px;border:1px solid #e3c29e;background:#fff6e8;border-radius:9px;color:#805a30;font-size:12px;margin-bottom:18px}.learning-grid,.achievement-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:15px}.learning-grid article,.achievement-grid article{border:1px solid var(--line);padding:20px;border-radius:12px;background:#fffef9;min-width:0}.card-index{display:block;font-size:10px;letter-spacing:1px;color:#7b8b6d;margin-bottom:12px}.learning-grid p,.achievement-grid p{font-size:12px;color:var(--muted);margin-top:10px}.learning-grid code{display:block;font-size:11px;margin-top:12px;color:var(--forest)}.achievement-grid{margin-bottom:30px}.achievement-grid h4{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap}.achievement-grid .pill{font-size:10px;padding:2px 7px}.achievement-grid .reward{font-weight:650;color:var(--forest)}.system-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px}.system-card{border:1px solid var(--line);border-radius:12px;padding:20px;background:#f8f9f2}.system-card h4{margin-bottom:12px}.system-card ul{margin:0;padding-left:17px;font-size:12px;color:#53664e;line-height:1.85}.system-card li+li{margin-top:5px}.resource-note{margin-top:20px;padding:21px;background:var(--sage);border-radius:12px}.resource-note p{font-size:12px;margin-top:10px;color:#50634b}footer{display:flex;justify-content:space-between;gap:12px;padding:25px 0 32px;font-size:11px;color:#7b8574;flex-wrap:wrap}.noscript{padding:20px;background:var(--danger-bg);color:var(--danger)}.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+@media(min-width:1650px){.hero{padding-top:58px}.metric{padding:24px}}
+@media(max-width:1100px){.masthead{padding:20px 24px}main{padding:0 24px}.hero{gap:28px}.metrics{gap:10px}.metric{padding:16px}.header-note{display:none}.game-link{margin-left:auto}.editor-layout{grid-template-columns:140px minmax(0,1fr)}.learning-grid,.achievement-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.learning-grid article:last-child{grid-column:1/-1}}
+@media(max-width:760px){.masthead{padding:16px}.brand{font-size:13px}.brand small{font-size:8px}.brand-mark{width:36px;height:36px}main{padding:0 14px}.hero{grid-template-columns:1fr;gap:23px;padding:29px 3px 24px}h1{font-size:35px}.hero-copy{font-size:13px}.workflow{padding:18px}.metrics{grid-template-columns:repeat(2,minmax(0,1fr));margin-bottom:22px}.metric{padding:15px 12px}.metric>span{font-size:10px}.metric strong{font-size:21px}.metric small{font-size:10px}.workbench-heading{padding:20px 16px 15px}.workbench-heading h2{font-size:22px}.toolbar{padding:0 16px 16px;gap:7px}.toolbar button,.toolbar .button{padding:9px 11px;font-size:12px}.state-panel{margin:0 16px 15px;font-size:11px}.tabs{padding:0 16px;gap:18px}.tabs button{font-size:12px}.editor-layout{grid-template-columns:minmax(0,1fr)}.group-sidebar{padding:12px;border-right:0;border-bottom:1px solid var(--line)}.group-sidebar h3,.group-sidebar>p{display:none}.group-sidebar nav{flex-direction:row;overflow-x:auto;gap:5px;padding:3px}.group-sidebar button{flex-shrink:0;gap:9px}.searchbar{padding:16px 12px;gap:10px}.searchbar>label:first-child{display:none}.searchbar input[type=search]{width:100%}.searchbar #visibleCount{margin-left:auto}.table-scroll{max-height:640px}.panel-content{padding:18px 14px}.experiment-grid,.system-grid{grid-template-columns:1fr}.learning-grid,.achievement-grid{grid-template-columns:1fr}.learning-grid article:last-child{grid-column:auto}.experiment-card{padding:16px}.section-intro p{font-size:12px}.table-footnote{padding:12px;font-size:10px}.pill{font-size:10px}.state-badges{gap:5px}.game-link{font-size:11px}.workflow ol{gap:11px 8px}.workflow li{font-size:11px}.workflow p{font-size:11px}}
+@media(prefers-reduced-motion:no-preference){button,a{transition:background .15s,color .15s,border-color .15s}}
+@media print{.masthead,.toolbar,.tabs,.group-sidebar,.searchbar,.workflow,.learning-grid,footer{display:none}.hero{display:block;padding:15px 0}h1{font-size:26px}.metrics{grid-template-columns:repeat(4,1fr)}.workbench{border:0}.editor-layout{display:block}.table-scroll{max-height:none;overflow:visible}main{padding:0}.table-scroll table{min-width:0;font-size:9px}.key-cell,.field-label,.help-cell{min-width:0}.field-editor{width:70px}.help-cell{font-size:9px}}
+</style>
+</head>
+<body>
+  <header class="masthead">
+    <a class="brand" href="#"><span class="brand-mark" aria-hidden="true">芽</span><span>小小推球家<small>生命远征 / BALANCE LAB</small></span></a>
+    <div class="header-note">离线配置工作台 <span class="pill">本地草稿 · 不自动同步</span></div>
+    <a class="game-link" href="./小小推球家-生命远征.html" target="_blank" rel="noopener">打开游戏 ↗</a>
+  </header>
+  <main>
+    <section class="hero">
+      <div><p class="eyebrow">观察 · 假设 · 改动 · 试玩</p><h1>让每一次远征，<br>都有自己的节奏。</h1><p class="hero-copy">在表格里练习数值，在固定种子的新局里检验假设。<br>不替你推荐答案，只把规则与代价摊开。</p></div>
+      <aside class="workflow"><h2>一次完整的调参实验</h2><ol><li><b>改</b><span>选择字段，每次只改 1–2 项</span></li><li><b>验</b><span>校验草稿，下载完整配置 JSON</span></li><li><b>导</b><span>游戏「我的巢穴」导入配置</span></li><li><b>对</b><span>对照两边的 revision</span></li><li><b>玩</b><span>开启新局，用固定 seed 对比</span></li></ol><p>不同浏览器、file:// 路径的存储可能隔离。必须下载 JSON 再到游戏营地导入；这里无法确认游戏已应用。</p></aside>
+    </section>
+    <section class="metrics" aria-label="草稿核心测算">
+      <article class="metric"><span>01 / 零永久升级采集需求</span><strong id="metricPickups">—</strong><small id="metricPickupsNote">普通 + 金色，采集者，无构筑、零基因</small></article>
+      <article class="metric"><span>02 / 全程交付次数</span><strong id="metricDeliveries">—</strong><small>三个阶段的 count 之和</small></article>
+      <article class="metric"><span>03 / 初始倒计时 · active 硬上限</span><strong id="metricTime">—</strong><small>剩余时间上限不等于累计时长上限</small></article>
+      <article class="metric"><span>04 / 四项巢穴买满总粮食</span><strong id="metricFood">—</strong><small>毛成本；净成本、预计局数见长线实验</small></article>
+    </section>
+    <section class="workbench" aria-labelledby="workbenchTitle">
+      <div class="workbench-heading"><div><p class="eyebrow">CONFIGURATION DESK</p><h2 id="workbenchTitle">数值工作台</h2></div><div class="state-badges"><span class="pill">偏离默认 <b id="changedCount">0</b> 项</span><span class="pill" id="pendingCount">与本页快照相同</span></div></div>
+      <div class="toolbar">
+        <button id="validateBtn" class="primary" type="button">校验草稿</button>
+        <button id="exportConfigBtn" type="button">导出配置 JSON</button>
+        <label class="button" for="importConfigInput">导入配置 JSON<input id="importConfigInput" type="file" accept=".json,application/json"></label>
+        <button id="exportReportBtn" type="button">导出数值汇总</button>
+        <button id="resetAllBtn" class="quiet" type="button">恢复全部默认</button>
+      </div>
+      <div class="state-panel"><p id="status" role="status" aria-live="polite">模块正在加载。若直接 file:// 打开源文件被浏览器阻止，请使用主层打包后的「数值调参台.html」，或本地静态服务。</p><p id="revision">草稿 revision — / applied — / 游戏实际状态未知</p><p id="storageStatus">独立缓存 dung-tuning-draft-v1；不读取或写入游戏配置缓存。</p></div>
+      <div class="tabs" role="tablist" aria-label="工作区"><button id="fieldsTab" type="button" role="tab" aria-selected="true" aria-controls="fieldsPanel" tabindex="0">全部配置</button><button id="experimentTab" type="button" role="tab" aria-selected="false" aria-controls="experimentPanel" tabindex="-1">节奏与长线实验</button><button id="systemsTab" type="button" role="tab" aria-selected="false" aria-controls="systemsPanel" tabindex="-1">系统与成就</button></div>
+      <section id="fieldsPanel" role="tabpanel" aria-labelledby="fieldsTab">
+        <div class="editor-layout"><aside class="group-sidebar"><h3>字段分组</h3><nav id="groupNav" aria-label="配置分组"></nav><p>估算字段独立分组，不影响游戏规则。默认值仅兼容旧规则，并非已验证的平衡结论。</p></aside><div class="table-pane"><div class="searchbar"><label for="searchInput">查找参数</label><input id="searchInput" type="search" placeholder="搜索 key、中文名、说明…" autocomplete="off"><label class="changed-filter"><input id="onlyChanged" type="checkbox">仅看已改</label><span id="visibleCount"></span></div><div class="table-scroll" tabindex="0" role="region" aria-label="配置字段表，可横向滚动"><table id="configTable"><caption class="sr-only">全部配置：当前草稿支持编辑，默认值可逐行恢复</caption><thead><tr><th scope="col">字段 key</th><th scope="col">中文名</th><th scope="col">当前可编辑值</th><th scope="col">默认值</th><th scope="col">单位</th><th scope="col">范围</th><th scope="col">说明与影响</th><th scope="col">操作</th></tr></thead><tbody id="configRows"></tbody></table></div><p id="emptyState" class="empty" hidden>没有匹配字段。试试清空搜索或切换分组。</p><p class="table-footnote">暖黄色 = 偏离默认；红色 = 非法输入。空白保留为空白，不会自动变成 0。跨字段校验错误见顶部状态。</p></div></div>
+      </section>
+      <section id="experimentPanel" role="tabpanel" aria-labelledby="experimentTab" hidden><div class="panel-content"><div class="section-intro"><h3>节奏实验区</h3><p>基于当前合法草稿即时计算。无构筑、零永久升级、零基因、采集者、难度 0 的静态估算；不是 Monte Carlo，也不是平衡验证。</p></div><div id="experimentContent"></div><div class="section-intro"><h3>三个小实验，不提供推荐预设</h3><p>先写假设 → 只改 1–2 个字段 → 固定 seed 测试 → 记录结果再决定。</p></div><div class="learning-grid"><article><span class="card-index">实验 01</span><h4>分清两种时间</h4><p>假设：提高初始倒计时会增加容错，但不会突破 active 硬上限。</p><code>run.baseTime / run.hardLimit</code><p>记录实际活跃时长、续时次数与失败原因；保持 baseTime ≤ timeCap。</p></article><article><span class="card-index">实验 02</span><h4>球更大，还是交付更多？</h4><p>假设：相近采集量下，额外交付会增加移动负担。</p><code>stage.0.count / stage.0.mass</code><p>固定种子，记录采集次数、交付次数及绕行距离，不只看胜负。</p></article><article><span class="card-index">实验 03</span><h4>奖励与永久成长</h4><p>假设：早期价格和成就门槛会改变第一次购买时点。</p><code>upgrade.shell.cost1 / achievements.first_win.target</code><p>记录结算净收益、领奖时点和购买局数。成就参数为 PLACEHOLDER，待试玩。</p></article></div></div></section>
+      <section id="systemsPanel" role="tabpanel" aria-labelledby="systemsTab" hidden><div class="panel-content"><div class="section-intro"><h3>成就观察簿</h3><p>六项新系统参数均为 PLACEHOLDER，待试玩。展示条件与奖励，不宣称已测试平衡；每项成就只可领取一次。</p></div><div id="achievementCards" class="achievement-grid"></div><div class="section-intro"><h3>完整系统速览</h3><p>以下摘要读取当前草稿字段；完整 key 与规则影响可在配置表查询。</p></div><div id="systemSummary" class="system-grid"></div><article class="resource-note"><h4>资源来源 / 消耗（source / sink）</h4><p>口粮来源：普通与金色采集先入背包；交付将背包与质量折粮入库；胜利结算奖励、失败或撤退保留、遗物、即时口粮、一次性成就。口粮消耗：四项巢穴永久升级；未保留背包在失败或撤退时损失。</p><p>基因来源：胜利基础奖励 + 难度奖励、一次性成就；消耗：基因等级购买。后代来自胜利结算，只作为特质解锁门槛，不因解锁消耗。分数用于结算记录，不是购买货币。</p><p>本页的平均每局口粮是已经结算、含成败的净收益假设，不再乘成功率；成就奖励与既有存档资源均不计入长线局数。</p><p><strong>两处值得练习的现有设计问题：</strong>永久升级买满后，粮食和基因缺少持续消耗，继续增加奖励不会自动产生长线目标。基因只给首球香气，而默认储粮阶段香气门槛为 0，交付又会清空香气，所以默认传承对达成目标几乎没有帮助；可以先调整储粮香气门槛做对照实验，但这也会增加早期负担。它们是本版明确保留、供你调优的设计问题，不代表已经平衡。</p></article></div></section>
+    </section>
+    <footer><span>生命远征 / 数值练习场</span><span>规则是起点，试玩才是证据。</span></footer>
+  </main>
+  <noscript><p class="noscript">请启用 JavaScript 后使用配置编辑、校验与导出功能。</p></noscript>
+  <script type="module">const Config = (() => {// 数值配置边界：导入不读写持久化；只有显式 load 会读取本机配置。
+const definitions = [];
+function add(group, key, value, label, unit = '', min = 0, max = 10000, integer = false, help = '') {
+  const placeholder = group === '成就';
+  definitions.push(Object.freeze({
+    key, group, label, unit, min, max, step: integer ? 1 : 0.01, integer, default: value,
+    help: `${placeholder ? 'PLACEHOLDER：新增成就参数，待验证。' : 'legacy 默认兼容原规则，不代表已验证的平衡结论。'}${help}`,
+    impact: group === '估算' ? '仅用于估算，不影响游戏；实际时长与倒计时预算分别计算。' : `${group}规则：${label}；修改后由规则或主层读取。`,
+  }));
+}
+function rows(group, prefix, entries) {
+  for (const [key, value, label, unit, min, max, integer, help] of entries) {
+    add(group, `${prefix}.${key}`, value, label, unit, min, max, integer, help);
+  }
+}
+rows('局内', 'run', [
+  ['baseTime',210,'初始倒计时','秒',1,36000], ['timeCap',300,'倒计时上限','秒',1,36000],
+  ['stageBonus',25,'阶段完成续时','秒',0,36000], ['baseHp',4,'基础生命','点',1,100,true],
+  ['minHp',2,'最低最大生命','点',1,100,true], ['startMass',1,'基础初始质量','kg',0.1,1000],
+  ['massCap',24,'质量上限','kg',0.1,1000], ['rerolls',1,'初始重抽次数','次',0,100,true],
+  ['draftEvery',12,'普通采集选卡间隔','次',1,1000,true],
+  ['hardLimit',0,'累计活跃时长上限','秒',0,36000,false,'0 为关闭；累计 active elapsed 达到上限即失败，续时不能延长实际时长上限。'],
+  ['staminaCap',100,'体力上限','点',1,1000], ['draftChoices',3,'每次选卡数量','张',1,3,true],
+]);
+rows('采集', 'collect', [
+  ['goldAroma',1,'金色养料香气','点',0,100,true], ['goldFood',3,'金色养料口粮','份',0,1000,true],
+  ['normalFood',1,'普通养料口粮','份',0,1000,true], ['score',20,'普通采集基础分','分',0,10000,true],
+  ['comboStep',3,'连击倍率步长','次',1,1000,true], ['comboMax',5,'连击最大倍率','倍',1,100,true],
+  ['goldScore',60,'金色采集得分（主层发放）','分',0,10000,true],
+]);
+rows('交付', 'deliver', [
+  ['foodPerKg',2,'质量折粮','份/kg',0,1000], ['scorePerKg',100,'质量得分','分/kg',0,10000],
+  ['heal',1,'交付回血','点',0,100,true], ['invincible',3,'交付无敌','秒',0,120],
+]);
+rows('受击', 'hit', [
+  ['hp',1,'生命损失','点',0,100,true], ['minMass',1.8,'最低基础质量损失','kg',0,1000],
+  ['massRatio',0.25,'质量损失比例','比例',0,1], ['massFloor',1,'受击质量下限','kg',0.1,1000],
+  ['aroma',1,'香气损失','点',0,100,true], ['time',4,'倒计时损失','秒',0,3600],
+  ['invincible',2.2,'受击无敌','秒',0,120],
+]);
+rows('结算', 'settle', [
+  ['failKeep',0.2,'失败基础口粮保留','比例',0,1], ['retreatKeep',0.6,'撤退最低口粮保留','比例',0,1],
+  ['winFood',40,'胜利基础口粮','份',0,1000000,true], ['difficultyFood',10,'每难度胜利口粮','份',0,100000,true],
+  ['winGenes',3,'胜利基础基因','点',0,10000,true], ['difficultyGenes',1,'每难度胜利基因','点',0,1000,true],
+  ['offspring',2,'胜利后代','只',0,1000,true], ['timeScore',8,'剩余倒计时得分','分/秒',0,10000],
+]);
+add('局外','meta.initialFood',18,'初始口粮','份',0,1000000,true);
+rows('基因','gene', [['max',2,'基因等级上限','级',0,20,true],['cost',3,'每级基因花费','点',0,10000,true],['aromaPerLevel',1,'每级初始香气','点',0,100,true]]);
+add('难度','difficulty.max',10,'游戏难度上限','级',0,50,true);
+for (const [index,mass,aroma,count] of [[0,6,0,2],[1,10,3,1],[2,8,1,2]]) {
+  rows('阶段',`stage.${index}`, [['mass',mass,`阶段 ${index+1} 质量门槛`,'kg',0.1,1000],['aroma',aroma,`阶段 ${index+1} 香气门槛`,'点',0,1000,true],['count',count,`阶段 ${index+1} 交付次数`,'次',1,100,true]]);
+}
+for (const [id,name,value,unit,integer] of [['shell','厚实甲壳',1,'点',true],['seed','育球种子',0.5,'kg',false],['legs','强健足肢',0.05,'比例',false],['insurance','应急储备',0.15,'比例',false]]) {
+  rows('永久升级',`upgrade.${id}`, [
+    ['max',3,`${name}等级上限`,'级',1,20,true], ['cost1',12,`${name}第一级价格`,'份',0,1000000,true],
+    ['cost2',24,`${name}第二级价格`,'份',0,1000000,true], ['cost3',40,`${name}第三级价格`,'份',0,1000000,true],
+    ['costGrowth',1.6,`${name}后续价格增长`,'倍',1,5,false,'第四级起 ceil(cost3 × costGrowth^(购买等级−3))。'],
+    ['value',value,`${name}每级效果`,unit,0,unit === '比例' ? 1 : 100,integer],
+  ]);
+}
+for (const [id,name,unlock,speed,growth,hp] of [['forager','采集者',0,1,1.12,0],['runner','奔跑者',2,1.12,1,-1],['guardian','守护者',4,0.92,1,2]]) {
+  rows('特质',`trait.${id}`, [
+    ['unlock',unlock,`${name}解锁后代数`,'只',0,id==='forager'?0:1000000,true],
+    ['speed',speed,`${name}速度倍率`,'倍',0.1,10], ['growth',growth,`${name}生长倍率`,'倍',0.1,10],
+    ['hp',hp,`${name}生命增减`,'点',-100,100,true],
+  ]);
+}
+for (const [id,name,value,unit,integer] of [
+  ['swift','疾行',0.1,'比例',false],['growth','沃土',0.2,'比例',false],['magnet','吸附',0.55,'距离',false],
+  ['endurance','耐力',0.15,'比例',false],['recovery','回春',0.25,'比例',false],['armor','护球',0.3,'比例',false],
+  ['insurance','藏粮',0.1,'比例',false],['aroma','花香',1,'点',true],['jump','弹跳',1.5,'速度',false],
+  ['thorns','荆棘',0.05,'比例',false],['bank','丰收',0.25,'比例',false],['vitality','生机',1,'点',true],
+]) {
+  rows('局内卡牌',`perk.${id}`, [['max',2,`${name}等级上限`,'级',1,5,true],['value',value,`${name}每级效果`,unit,0,unit==='比例'?1:100,integer]]);
+}
+add('局内卡牌','perk.armorCap',0.7,'球损失减免上限','比例',0,1);
+rows('即时卡','instant', [['heal',2,'急救回复生命','点',0,100,true],['clock',20,'余裕增加倒计时','秒',0,36000],['cash',8,'口粮增加背包','份',0,10000,true]]);
+rows('世界','world', [
+  ['normalCount',132,'普通养料数量','个',8,300,true], ['goldCount',20,'金色养料数量','个',3,80,true],
+  ['starterMass',0.9,'起始区养料质量','kg',0,100], ['normalMin',0.6,'普通养料最小质量','kg',0,100],
+  ['normalMax',1.05,'普通养料最大质量','kg',0,100], ['outerBonus',1.6,'外围质量加成','倍',0,10],
+  ['riskRadius',22,'高风险距离阈值','距离',15,29], ['normalRespawn',23,'普通养料重生','秒',0.1,3600],
+  ['goldRespawn',26,'金色养料重生','秒',0.1,3600], ['pickupPadding',0.32,'拾取额外半径','距离',0,10],
+]);
+rows('移动','move', [
+  ['walk',5.4,'行走速度','距离/秒',0.1,100], ['dash',10,'冲刺速度','距离/秒',0.1,100],
+  ['drain',28,'冲刺体力消耗','点/秒',0,1000], ['regen',17,'体力回复','点/秒',0,1000],
+  ['water',0.48,'水域速度倍率','倍',0.01,5], ['rain',0.86,'雨天速度倍率','倍',0.01,5],
+  ['drought',1.35,'旱天体力消耗倍率','倍',0.01,10], ['weatherPeriod',32,'天气周期','秒',1,3600], ['jump',7,'基础跳跃速度','速度',0.1,100],
+]);
+rows('敌人','enemy', [
+  ['baseCount',3,'初始敌人数','只',0,3,true], ['perStage',1,'每阶段增加敌人','只',0,1,true],
+  ['chase',2.65,'追击速度','距离/秒',0,100], ['stageSpeed',0.25,'每阶段速度增量','距离/秒',0,10],
+  ['patrol',1.6,'巡逻速度','距离/秒',0,100], ['difficultySpeed',0.12,'每难度敌速加成','比例',0,10],
+]);
+rows('鸟袭','bird', [
+  ['first',11,'首次鸟袭等待','秒',0,3600], ['baseInterval',13,'基础鸟袭间隔','秒',0.1,3600],
+  ['minInterval',4,'最短鸟袭间隔','秒',0.1,3600], ['stageReduction',1.8,'阶段间隔减量','秒',0,120],
+  ['difficultyReduction',0.35,'难度间隔减量','秒',0,120], ['riskReduction',4,'高风险间隔减量','秒',0,120],
+  ['warning',1.6,'鸟袭预警时长','秒',0.1,120], ['radius',2.8,'鸟袭命中半径','距离',0.1,30],
+]);
+rows('遗物','relic', [['time',12,'遗物交易扣除时间','秒',0,3600],['food',12,'遗物口粮','份',0,100000,true]]);
+for (const [id,name,target,food,genes] of [['first_win','初次育婴',1,12,0],['family','繁衍家族',10,24,1],['veteran','远征老手',10,40,2],['collector','采集达人',200,20,0],['banker','储粮专家',1000,40,1],['swift','速战速决',120,30,1]]) {
+  rows('成就',`achievements.${id}`, [
+    ['target',target,`${name}目标`,id==='swift'?'实际秒数':'累计次数',1,1000000000,id!=='swift'],
+    ['food',food,`${name}口粮奖励`,'份',0,1000000,true], ['genes',genes,`${name}基因奖励`,'点',0,10000,true],
+    ['enabled',1,`${name}启用`,'0/1',0,1,true],
+  ]);
+}
+rows('估算','estimate', [
+  ['pickupsPerMinute',18,'每分钟采集次数','次/分钟',0.1,1000], ['distancePerDelivery',30,'每次交付移动距离','距离',0,10000],
+  ['travelSpeed',4,'估算移动速度','距离/秒',0.1,100], ['successRate',0.6,'估算成功率','比例',0,1],
+  ['foodPerRun',100,'估算每局口粮','份',0,1000000], ['sessionOverhead',40,'局外及暂停开销','秒',0,36000,false,'属于现实会话耗时，不计入 active elapsed，也不消耗局内倒计时。'],
+]);
+
+const fields = Object.freeze(definitions);
+const defaults = Object.freeze(Object.fromEntries(fields.map(item => [item.key,item.default])));
+const keys = fields.map(item => item.key);
+function record(value, allowed, label) {
+  if (!value || typeof value !== 'object' || ![Object.prototype,null].includes(Object.getPrototypeOf(value))) throw new Error(`${label} 必须是普通对象`);
+  if (Reflect.ownKeys(value).some(key => !allowed.includes(key))) throw new Error(`${label} 包含未知字段`);
+  for (const key of allowed) {
+    const descriptor = Object.getOwnPropertyDescriptor(value,key);
+    if (!descriptor || !Object.hasOwn(descriptor,'value')) throw new Error(`${label} 缺少或非法字段：${key}`);
+  }
+}
+function validate(input) {
+  record(input,['format','version','values'],'配置');
+  if (input.format !== 'dung-balance-1' || input.version !== 1) throw new Error('不支持的配置格式或版本');
+  record(input.values,keys,'values');
+  const values = {};
+  for (const item of fields) {
+    const value = input.values[item.key];
+    if (typeof value !== 'number' || !Number.isFinite(value) || value < item.min || value > item.max || (item.integer && !Number.isSafeInteger(value))) {
+      throw new Error(`${item.key} 必须是 ${item.min} 至 ${item.max} 的有限${item.integer?'整数':'数字'}`);
+    }
+    values[item.key] = Object.is(value,-0) ? 0 : value;
+  }
+  const require = (condition,message) => { if (!condition) throw new Error(message); };
+  require(values['run.baseTime'] <= values['run.timeCap'],'初始倒计时不能超过倒计时上限');
+  require(values['run.minHp'] <= values['run.baseHp'],'最低生命不能超过基础生命');
+  require(values['run.startMass'] + values['upgrade.seed.value'] * values['upgrade.seed.max'] <= values['run.massCap'],'初始质量加满级种子不能超过质量上限');
+  require(values['hit.massFloor'] <= values['run.startMass'],'受击质量下限不能超过初始质量');
+  require(values['world.normalMin'] <= values['world.normalMax'],'普通养料最小质量不能超过最大质量');
+  require(values['enemy.baseCount'] + 2*values['enemy.perStage'] <= 5,'末阶段敌人数不能超过 5');
+  require(values['bird.minInterval'] <= values['bird.baseInterval'],'鸟袭最短间隔不能超过基础间隔');
+  require(values['move.dash'] >= values['move.walk'],'冲刺速度不能低于行走速度');
+  require(values['perk.endurance.value'] * values['perk.endurance.max'] <= 0.9,'耐力满级消耗减免不能超过 90%');
+  for (let index=0; index<3; index++) {
+    require(values[`stage.${index}.mass`] <= values['run.massCap'],'阶段目标质量不能超过质量上限');
+    require(values[`stage.${index}.aroma`] === 0 || (values['world.goldCount'] > 0 && values['collect.goldAroma'] > 0),'阶段香气必须可由金色养料获得');
+  }
+  for (const id of ['shell','seed','legs','insurance']) {
+    require(Math.ceil(values[`upgrade.${id}.cost3`] * values[`upgrade.${id}.costGrowth`] ** Math.max(0,values[`upgrade.${id}.max`]-3)) <= 1e12,'最高升级价格不能超过存档口粮上限');
+  }
+  return {format:'dung-balance-1',version:1,values};
+}
+function hash(values) {
+  let result = 2166136261;
+  for (const char of JSON.stringify(values)) result = Math.imul(result ^ char.charCodeAt(0),16777619) >>> 0;
+  return result.toString(16).padStart(8,'0');
+}
+let current = {format:'dung-balance-1',version:1,values:{...defaults}};
+let revision = hash(current.values);
+let error = '';
+const snapshot = () => ({format:current.format,version:current.version,values:{...current.values}});
+function apply(input) {
+  const next = validate(input);
+  const nextRevision = hash(next.values);
+  current = next;
+  revision = nextRevision;
+  error = '';
+  return snapshot();
+}
+const Config = Object.freeze({
+  fields, defaults, legacy: defaults,
+  get(key) { return Object.hasOwn(current.values,key) ? current.values[key] : undefined; },
+  validate, export: snapshot, apply,
+  reset() { return apply({format:'dung-balance-1',version:1,values:{...defaults}}); },
+  get revision() { return revision; },
+  get error() { return error; },
+  load() {
+    try {
+      const raw = globalThis.localStorage.getItem('dung-balance-v1');
+      if (raw === null) { error = ''; return snapshot(); }
+      return apply(JSON.parse(raw));
+    } catch (cause) {
+      error = `读取数值配置失败：${cause instanceof Error ? cause.message : String(cause)}`;
+      return null;
+    }
+  },
+  describe() { return {baseline:'legacy',fields,defaults,revision,time:'倒计时预算可续时；实际活跃时长由 elapsed 累计，hardLimit=0 时不限。估算字段不影响规则。'}; },
+});
+
+return Config;})();
+
+const $ = id => document.getElementById(id);
+const fields = Config.fields;
+const byKey = new Map(fields.map(field => [field.key, field]));
+const STORAGE_KEY = 'dung-tuning-draft-v1';
+const MAX_FILE_SIZE = 200 * 1024;
+const upgradeNames = [['shell', '厚实甲壳'], ['seed', '育球种子'], ['legs', '强健足肢'], ['insurance', '应急储备']];
+const traitNames = [['forager', '采集者'], ['runner', '奔跑者'], ['guardian', '守护者']];
+const perkNames = [['swift', '疾行'], ['growth', '沃土'], ['magnet', '吸附'], ['endurance', '耐力'], ['recovery', '回春'], ['armor', '护球'], ['insurance', '藏粮'], ['aroma', '花香'], ['jump', '弹跳'], ['thorns', '荆棘'], ['bank', '丰收'], ['vitality', '生机']];
+const achievementNames = [['first_win', '初次育婴'], ['family', '繁衍家族'], ['veteran', '远征老手'], ['collector', '采集达人'], ['banker', '储粮专家'], ['swift', '速战速决']];
+let draft = Object.fromEntries(fields.map(field => [field.key, String(field.default)]));
+let applied = Config.validate(Config.export());
+let appliedLabel = '本页初始规则快照';
+let selectedGroup = '全部';
+let mutation = 0;
+let fileRequest = 0;
+let storageBlocked = false;
+const rowViews = new Map();
+const groupButtons = new Map();
+
+function element(tag, className, text) {
+  const node = document.createElement(tag);
+  if (className) node.className = className;
+  if (text !== undefined) node.textContent = String(text);
+  return node;
+}
+function message(text, tone = 'info') {
+  $('status').textContent = text;
+  $('status').dataset.tone = tone;
+}
+function fmt(value, digits = 2) {
+  return Number.isFinite(value) ? value.toLocaleString('zh-CN', { maximumFractionDigits: digits }) : '不可达';
+}
+function quotient(need, income) {
+  return need <= 0 ? 0 : income > 0 ? Math.ceil(need / income) : Infinity;
+}
+function revision(values) {
+  let result = 2166136261;
+  for (const char of JSON.stringify(values)) result = Math.imul(result ^ char.charCodeAt(0), 16777619) >>> 0;
+  return result.toString(16).padStart(8, '0');
+}
+function parseField(field, raw) {
+  if (typeof raw !== 'string' || raw.trim() === '') return { error: '不能为空，请填写数字' };
+  if (!/^[+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:e[+-]?\d+)?$/i.test(raw.trim())) return { error: '请输入完整十进制数字' };
+  const value = Number(raw);
+  if (!Number.isFinite(value)) return { error: '必须是有限数字' };
+  if (field.integer && !Number.isSafeInteger(value)) return { error: '必须是安全整数' };
+  if (value < field.min || value > field.max) return { error: `范围 ${field.min} 至 ${field.max}` };
+  return { value: Object.is(value, -0) ? 0 : value };
+}
+function inspectDraft() {
+  const values = {};
+  const errors = new Map();
+  for (const field of fields) {
+    const parsed = parseField(field, draft[field.key]);
+    if (parsed.error) errors.set(field.key, parsed.error);
+    else values[field.key] = parsed.value;
+  }
+  if (errors.size) return { ok: false, errors, error: `${errors.size} 项非法输入；首项 ${errors.keys().next().value}：${errors.values().next().value}` };
+  try {
+    return { ok: true, errors, envelope: Config.validate({ format: 'dung-balance-1', version: 1, values }) };
+  } catch (cause) {
+    return { ok: false, errors, error: `跨字段校验：${cause.message}` };
+  }
+}
+function isChanged(field) {
+  const parsed = parseField(field, draft[field.key]);
+  return Boolean(parsed.error) || parsed.value !== field.default;
+}
+function saveDraft() {
+  if (storageBlocked) return;
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ version: 1, raw: draft }));
+    $('storageStatus').textContent = '草稿已自动保存（含未完成输入）· dung-tuning-draft-v1 · 仅当前浏览器/路径可用；未写入游戏配置。';
+    $('storageStatus').dataset.tone = 'success';
+  } catch (cause) {
+    $('storageStatus').textContent = `自动保存失败：${cause.message}。草稿仍在本页内存中；修正并下载 JSON 后再离开，刷新可能丢失。`;
+    $('storageStatus').dataset.tone = 'error';
+  }
+}
+function loadDraft() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw === null) {
+      $('storageStatus').textContent = '尚无本页草稿。编辑后自动保存到 dung-tuning-draft-v1；不读取或写入游戏配置。';
+      return;
+    }
+    if (new Blob([raw]).size > MAX_FILE_SIZE) throw new Error('草稿缓存超过 200KB');
+    const saved = JSON.parse(raw);
+    if (!saved || typeof saved !== 'object' || Array.isArray(saved) || Object.keys(saved).length !== 2 || saved.version !== 1 || !Object.hasOwn(saved, 'raw')) throw new Error('草稿缓存结构不合法');
+    const values = saved.raw;
+    if (!values || typeof values !== 'object' || Array.isArray(values) || Object.keys(values).length !== fields.length || Object.keys(values).some(key => !byKey.has(key))) throw new Error('草稿缓存含未知或缺失字段');
+    if (fields.some(field => typeof values[field.key] !== 'string')) throw new Error('草稿缓存的原始值必须为字符串');
+    draft = Object.fromEntries(fields.map(field => [field.key, values[field.key]]));
+    $('storageStatus').textContent = '已恢复独立草稿（包括原有非法输入）；需重新校验，未应用到游戏。';
+  } catch (cause) {
+    storageBlocked = true;
+    $('storageStatus').textContent = `草稿读取失败：${cause.message}。已保留原缓存且暂停覆盖；本页改动仅存于内存，请下载 JSON 备份。`;
+    $('storageStatus').dataset.tone = 'error';
+  }
+}
+function buildRows() {
+  const fragment = document.createDocumentFragment();
+  for (const [index, field] of fields.entries()) {
+    const row = element('tr');
+    row.dataset.key = field.key;
+    const key = element('td', 'key-cell');
+    key.append(element('code', '', field.key));
+    row.append(key, element('td', 'field-label', field.label));
+    const editor = element('td');
+    const input = element('input', 'field-editor');
+    input.type = 'text';
+    input.inputMode = 'decimal';
+    input.autocomplete = 'off';
+    input.spellcheck = false;
+    input.dataset.key = field.key;
+    input.id = `field-${index}`;
+    input.setAttribute('aria-label', `${field.label}（${field.key}）`);
+    const error = element('span', 'field-error');
+    error.id = `error-${index}`;
+    input.setAttribute('aria-describedby', error.id);
+    input.addEventListener('input', () => setValue(field.key, input.value));
+    editor.append(input, error);
+    const help = element('td', 'help-cell', field.help);
+    help.append(element('small', '', field.impact));
+    if (field.key === 'estimate.foodPerRun') help.append(element('small', '', '口径：含成败、已结算的平均每局净收益；不得再次乘成功率。'));
+    if (field.key === 'gene.aromaPerLevel') help.append(element('small', '', '基因仅首球；交付后香气归零。本页零基因估算不扣减任何香气需求。'));
+    const action = element('td');
+    const reset = element('button', 'row-reset', '恢复');
+    reset.type = 'button';
+    reset.setAttribute('aria-label', `恢复 ${field.label} 默认值`);
+    reset.addEventListener('click', () => setValue(field.key, field.default));
+    action.append(reset);
+    row.append(editor, element('td', 'default-cell', field.default), element('td', '', field.unit || '—'), element('td', 'range-cell', `${field.min} – ${field.max}${field.integer ? ' · 整数' : ''}`), help, action);
+    rowViews.set(field.key, { row, input, error, reset, search: `${field.key} ${field.group} ${field.label} ${field.help} ${field.impact}`.toLowerCase() });
+    fragment.append(row);
+  }
+  $('configRows').append(fragment);
+  const groups = ['全部', ...new Set(fields.map(field => field.group))];
+  for (const group of groups) {
+    const button = element('button');
+    button.type = 'button';
+    button.append(element('span', '', group === '估算' ? '估算 · 不入规则' : group), element('span', 'nav-count', group === '全部' ? fields.length : fields.filter(field => field.group === group).length));
+    button.addEventListener('click', () => { selectedGroup = group; filterRows(); });
+    groupButtons.set(group, button);
+    $('groupNav').append(button);
+  }
+}
+function filterRows() {
+  const search = $('searchInput').value.trim().toLowerCase();
+  const changedOnly = $('onlyChanged').checked;
+  let visible = 0;
+  for (const field of fields) {
+    const view = rowViews.get(field.key);
+    const show = (selectedGroup === '全部' || field.group === selectedGroup) && (!search || view.search.includes(search)) && (!changedOnly || isChanged(field));
+    view.row.hidden = !show;
+    if (show) visible++;
+  }
+  for (const [group, button] of groupButtons) button.setAttribute('aria-pressed', String(selectedGroup === group));
+  $('visibleCount').textContent = `${visible} / ${fields.length} 项`;
+  $('emptyState').hidden = visible > 0;
+}
+function setValue(key, value) {
+  if (!byKey.has(key)) throw new Error(`未知字段：${key}`);
+  if (!['string', 'number'].includes(typeof value)) throw new Error('编辑值必须是字符串或数字');
+  draft[key] = String(value);
+  mutation++;
+  saveDraft();
+  const result = refresh();
+  message(result.ok ? '草稿已改动，尚未更新本页 applied 快照；请校验后下载，再到游戏导入。' : `草稿未通过校验：${result.error}。导出已禁用。`, result.ok ? 'info' : 'error');
+  return result.ok;
+}
+function commitSnapshot(envelope, label) {
+  applied = { format: envelope.format, version: envelope.version, values: { ...envelope.values } };
+  appliedLabel = label;
+}
+function validateDraft() {
+  const result = inspectDraft();
+  if (!result.ok) {
+    refresh();
+    message(`校验失败：${result.error}。草稿保留；未更新 applied，也不会导出。`, 'error');
+    return { ok: false, error: result.error };
+  }
+  commitSnapshot(result.envelope, '最近校验通过的本页快照');
+  refresh();
+  message('全部字段与关联约束校验通过。applied 仅是本页校验快照，不代表游戏已应用；下一步下载 JSON。', 'success');
+  return { ok: true, envelope: result.envelope, revision: revision(result.envelope.values) };
+}
+function importConfig(envelope) {
+  try {
+    // 先完整验证，成功后才原子替换草稿；不调用 Config.load/apply。
+    const checked = Config.validate(envelope);
+    const next = Object.fromEntries(fields.map(field => [field.key, String(checked.values[field.key])]));
+    draft = next;
+    mutation++;
+    commitSnapshot(checked, '最近导入并校验的本页快照');
+    saveDraft();
+    refresh();
+    message('配置完整校验通过，已导入本页。尚未同步游戏：请下载 JSON，在游戏「我的巢穴」导入并对照 revision。', 'success');
+    return { ok: true, revision: revision(checked.values) };
+  } catch (cause) {
+    message(`导入失败：${cause.message}。草稿、applied 与缓存均未改变；原文件未覆盖。`, 'error');
+    return { ok: false, error: cause.message };
+  }
+}
+async function readImport(event) {
+  const input = event.target;
+  const file = input.files?.[0];
+  if (!file) return;
+  const request = ++fileRequest;
+  const startMutation = mutation;
+  try {
+    if (file.size > MAX_FILE_SIZE) throw new Error('文件超过 200KB 上限');
+    const text = await file.text();
+    if (request !== fileRequest) return;
+    if (file.size > MAX_FILE_SIZE || new Blob([text]).size > MAX_FILE_SIZE) throw new Error('读取后文件超过 200KB 上限');
+    if (startMutation !== mutation) throw new Error('读取期间草稿已修改，请重新选择文件，避免覆盖新改动');
+    importConfig(JSON.parse(text.replace(/^\uFEFF/, '')));
+  } catch (cause) {
+    if (request === fileRequest) message(`导入失败：${cause.message}。草稿与 applied 未改变；文件未覆盖。`, 'error');
+  } finally {
+    if (request === fileRequest) input.value = '';
+  }
+}
+function download(blob, filename) {
+  const url = URL.createObjectURL(blob);
+  const link = element('a');
+  link.href = url;
+  link.download = filename;
+  document.body.append(link);
+  try { link.click(); } finally { link.remove(); setTimeout(() => URL.revokeObjectURL(url), 1500); }
+}
+function exportConfig() {
+  const result = inspectDraft();
+  if (!result.ok) { message(`禁止导出：${result.error}`, 'error'); return false; }
+  try {
+    download(new Blob([JSON.stringify(result.envelope, null, 2)], { type: 'application/json;charset=utf-8' }), '生命远征-数值配置.json');
+    commitSnapshot(result.envelope, '最近发起下载的本页快照');
+    refresh();
+    message('已发起「生命远征-数值配置.json」下载，请确认浏览器保存成功。再到游戏「我的巢穴」导入，对照 revision 后开新局。', 'success');
+    return true;
+  } catch (cause) { message(`下载失败：${cause.message}。草稿保留，请重试。`, 'error'); return false; }
+}
+function calculate(v) {
+  const avgNormalMass = (v['world.normalMin'] + v['world.normalMax']) / 2;
+  const growth = v['trait.forager.growth'];
+  const stages = [0, 1, 2].map(index => {
+    const count = v[`stage.${index}.count`];
+    const ordinary = quotient(Math.max(0, v[`stage.${index}.mass`] - v['run.startMass']), avgNormalMass * growth);
+    const gold = quotient(v[`stage.${index}.aroma`], v['collect.goldAroma']);
+    return { index, count, ordinary, gold, ordinaryTotal: ordinary * count, goldTotal: gold * count };
+  });
+  const ordinary = stages.reduce((sum, stage) => sum + stage.ordinaryTotal, 0);
+  const gold = stages.reduce((sum, stage) => sum + stage.goldTotal, 0);
+  const deliveries = stages.reduce((sum, stage) => sum + stage.count, 0);
+  const pickupSeconds = (ordinary + gold) / v['estimate.pickupsPerMinute'] * 60;
+  const travelSeconds = deliveries * v['estimate.distancePerDelivery'] / v['estimate.travelSpeed'];
+  const activeSeconds = pickupSeconds + travelSeconds;
+  const budget = v['run.baseTime'] + 2 * v['run.stageBonus'];
+  const upgrades = upgradeNames.map(([id, name]) => {
+    const costs = Array.from({ length: v[`upgrade.${id}.max`] }, (_, index) => index < 3 ? v[`upgrade.${id}.cost${index + 1}`] : Math.ceil(v[`upgrade.${id}.cost3`] * v[`upgrade.${id}.costGrowth`] ** (index - 2)));
+    return { id, name, costs, total: costs.reduce((sum, cost) => sum + cost, 0) };
+  });
+  const totalFood = upgrades.reduce((sum, upgrade) => sum + upgrade.total, 0);
+  const netFood = Math.max(0, totalFood - v['meta.initialFood']);
+  const geneCost = v['gene.max'] * v['gene.cost'];
+  const genePerRun = v['estimate.successRate'] * v['settle.winGenes'];
+  const offspringPerRun = v['estimate.successRate'] * v['settle.offspring'];
+  return { avgNormalMass, growth, stages, ordinary, gold, deliveries, pickupSeconds, travelSeconds, activeSeconds, budget, upgrades, totalFood, netFood, foodRuns: quotient(netFood, v['estimate.foodPerRun']), geneCost, genePerRun, geneRuns: quotient(geneCost, genePerRun), offspringPerRun };
+}
+function card(title) {
+  const node = element('article', 'experiment-card');
+  node.append(element('h4', '', title));
+  return node;
+}
+function miniTable(headers, rows) {
+  const wrap = element('div', 'mini-scroll');
+  const table = element('table', 'mini-table');
+  const head = element('thead');
+  const headRow = element('tr');
+  headers.forEach(label => { const th = element('th', '', label); th.scope = 'col'; headRow.append(th); });
+  head.append(headRow);
+  const body = element('tbody');
+  rows.forEach(values => { const row = element('tr'); values.forEach(value => row.append(element('td', '', value))); body.append(row); });
+  table.append(head, body);
+  wrap.append(table);
+  return wrap;
+}
+function renderExperiments(v, c) {
+  const grid = element('div', 'experiment-grid');
+  const collection = card('01 / 每颗球，从零升级开始');
+  collection.append(element('p', '', `avgNormalMass = (world.normalMin + world.normalMax) / 2 = ${fmt(c.avgNormalMass, 4)} kg；采集者 growth = ${fmt(c.growth)}；baseStart = ${fmt(v['run.startMass'])} kg。`), element('code', 'formula', 'ordinaryNeeded = ceil(max(0, mass − baseStart) / (avgNormalMass × forager.growth))\ngoldNeed = ceil(stage.aroma / goldAroma)\n总采集 = Σ stage.count × (ordinaryNeeded + goldNeed)\n总交付 = Σ stage.count'), miniTable(['阶段', '交付', '普通/颗', '金色/颗', '普通 + 金色合计'], c.stages.map(stage => [stage.index + 1, stage.count, fmt(stage.ordinary), fmt(stage.gold), `${fmt(stage.ordinaryTotal)} + ${fmt(stage.goldTotal)}`])), element('p', '', '每次交付后质量回到 baseStart、aroma 归 0；基因仅首球，这里零基因，因此每颗都要重新满足香气。金色采集不增加质量。普通质量均值未加外围加成，未纳入起始区质量、刷新等待与采集分布。'));
+  const pace = card('02 / 实际粗估耗时，不是倒计时');
+  pace.append(element('div', 'big-result', `${fmt(c.activeSeconds)} 秒`), element('code', 'formula', '实际粗估秒数 = (Σ普通 + Σ金色) / pickupsPerMinute × 60\n             + deliveries × distancePerDelivery / travelSpeed'), element('p', '', `采集项 ${fmt(c.pickupSeconds)} 秒 + 交付移动项 ${fmt(c.travelSeconds)} 秒。现实会话粗估 ${fmt(c.activeSeconds + v['estimate.sessionOverhead'])} 秒，含局外/暂停开销 ${fmt(v['estimate.sessionOverhead'])} 秒；该开销不计 active，也不消耗倒计时。`), element('p', '', '采集与行走可能重叠，直接相加会高估；敌袭、绕路、受击后的补采与等待刷新会使本式低估。无构筑零升级静态估算，非 Monte Carlo、非实测、非验证。'));
+  const clock = card('03 / 时间预算的三条边界');
+  clock.append(element('div', 'big-result', `${fmt(c.budget)} 秒名义预算`), element('code', 'formula', `完成前名义可用预算 = baseTime + 2 × stageBonus\n= ${v['run.baseTime']} + 2 × ${v['run.stageBonus']} = ${fmt(c.budget)} 秒\n续时后 time = min(timeCap, 当前 time + bonus)\n受击后 time = max(0, 当前 time − hit.time)`), element('p', '', `只有前两阶段完成续时参与完成前时间，最终交付的 bonus 不参与。阶段续时每次 +${fmt(v['run.stageBonus'])} 秒；即时卡 instant.clock 每次 +${fmt(v['instant.clock'])} 秒，均受 timeCap = ${fmt(v['run.timeCap'])} 秒的当下剩余时间限制。cap 不是总时长；触顶截断会使上述名义预算减少。`), element('p', '', `hit.time 每次受击惩罚 ${fmt(v['hit.time'])} 秒；遗物交易扣除 ${fmt(v['relic.time'])} 秒。两者和随机即时卡均未计入名义预算。`), element('p', '', v['run.hardLimit'] === 0 ? 'hardLimit = 0：累计 active 硬上限关闭，不表示倒计时不会耗尽。' : `累计 active 硬上限 ${fmt(v['run.hardLimit'])} 秒；达到即失败，续时不延长此上限。`), element('p', '', `估算与名义预算差值：${Number.isFinite(c.activeSeconds) ? `${fmt(c.activeSeconds - c.budget)} 秒（正数表示超过）` : '不可达'}。仅供观察，不是可通关证明；暂停与局外耗时不计 active。`));
+  const longTerm = card('04 / 巢穴永久成长的成本');
+  longTerm.append(element('code', 'formula', '第 1–3 级 = 配置 cost1、cost2、cost3\n第 L ≥ 4 级 = ceil(cost3 × costGrowth^(L − 3))\n买满总成本 = Σ 四项升级 Σ 各级成本\n净成本 = max(0, 总成本 − initialFood)\n预计局数 = ceil(净成本 / foodPerRun)'), miniTable(['巢穴升级', '各级价格', '合计'], c.upgrades.map(upgrade => [upgrade.name, upgrade.costs.map(cost => fmt(cost, 0)).join(' / '), fmt(upgrade.total, 0)])), element('p', '', `毛成本 ${fmt(c.totalFood, 0)} 份 − 初始口粮 ${fmt(v['meta.initialFood'], 0)} 份 → 净成本 ${fmt(c.netFood, 0)} 份；按每局 ${fmt(v['estimate.foodPerRun'])} 份已结算净收益，约 ${fmt(c.foodRuns, 0)} 局。`), element('p', '', 'foodPerRun 已包含成败影响，不再乘 successRate，避免双算。成就奖励不计；从全新存档、零永久升级出发，不读取已有库存。这里的均值局数不是达成时间的概率保证。'));
+  const lineage = card('05 / 基因与后代，不共用分母');
+  lineage.append(element('code', 'formula', '基因买满 = gene.max × gene.cost\n难度 0 平均基因/局 = successRate × winGenes\n基因局数 = ceil(买满基因 / 平均基因每局)\n特质局数 = ceil(后代门槛 / (successRate × offspring))'), element('p', '', `基因 ${v['gene.max']} 级 × ${v['gene.cost']} 点 = ${fmt(c.geneCost)} 点；成功率 ${fmt(v['estimate.successRate'] * 100)}% × 胜利 ${v['settle.winGenes']} 点 = ${fmt(c.genePerRun)} 点/局，约 ${fmt(c.geneRuns)} 局。`), miniTable(['特质', '后代门槛', '平均后代/局', '预计局数'], traitNames.map(([id, name]) => [name, fmt(v[`trait.${id}.unlock`]), fmt(c.offspringPerRun), fmt(quotient(v[`trait.${id}.unlock`], c.offspringPerRun))])), element('p', '', '默认难度 0，不计成就、难度加成及已有基因/后代；0 收益且目标大于 0 时显示不可达，目标已为 0 则需 0 局。后代门槛不是购买消耗。'));
+  const assumptions = card('06 / 哪些参数只是实验假设？');
+  assumptions.append(element('p', '', 'estimate.* 单独分组，修改不影响游戏规则；填写自己的试玩观察，而不是把估算当作游戏表现。'), miniTable(['假设', '当前值'], fields.filter(field => field.group === '估算').map(field => [field.label, `${fmt(v[field.key])} ${field.unit}`])), element('p', '', '固定 seed 只能控制可复现的随机序列；操作路线、选卡、受击和暂停应单独记录。先写假设，再做单变量或两字段实验。'));
+  grid.append(collection, pace, clock, longTerm, lineage, assumptions);
+  $('experimentContent').replaceChildren(grid);
+}
+function summaryCard(title, lines) {
+  const article = element('article', 'system-card');
+  article.append(element('h4', '', title));
+  const list = element('ul');
+  lines.forEach(line => list.append(element('li', '', line)));
+  article.append(list);
+  return article;
+}
+function renderSystems(v, c) {
+  const achievementCards = document.createDocumentFragment();
+  for (const [id, name] of achievementNames) {
+    const target = v[`achievements.${id}.target`];
+    const condition = id === 'family' ? `累计后代 ≥ ${fmt(target)} 只` : id === 'collector' ? `已结算普通采集累计 ≥ ${fmt(target)} 次` : id === 'banker' ? `已交付口粮累计 ≥ ${fmt(target)} 份（不是总库存或结算奖励）` : id === 'swift' ? `至少胜利一次，最佳实际 active 时长 ≤ ${fmt(target)} 秒（不是剩余倒计时）` : `累计胜利 ≥ ${fmt(target)} 次`;
+    const article = element('article');
+    const heading = element('h4', '', name);
+    heading.append(element('span', 'pill', v[`achievements.${id}.enabled`] ? '启用' : '关闭'));
+    article.append(element('span', 'card-index', 'PLACEHOLDER · 待试玩'), heading, element('p', '', condition), element('p', 'reward', `一次性奖励：口粮 ${fmt(v[`achievements.${id}.food`])} / 基因 ${fmt(v[`achievements.${id}.genes`])}`), element('p', '', `字段 achievements.${id}.*；未进行成就平衡验证，不计入长线收益估算。`));
+    achievementCards.append(article);
+  }
+  $('achievementCards').replaceChildren(achievementCards);
+  const pct = value => `${fmt(value * 100)}%`;
+  const effects = {
+    swift: value => `每级移动速度 +${pct(value)}`,
+    growth: value => `每级采集质量增长 +${pct(value)}`,
+    magnet: value => `每级拾取范围 +${fmt(value)}`,
+    endurance: value => `每级体力消耗降低 ${pct(value)}`,
+    recovery: value => `每级体力回复 +${pct(value)}`,
+    armor: value => `每级球损失减免 +${fmt(value * 100)} 个百分点`,
+    insurance: value => `每级失败背包保留 +${fmt(value * 100)} 个百分点，合计最高 100%`,
+    aroma: value => `每级金色养料额外香气 +${fmt(value)}`,
+    jump: value => `每级跳跃速度 +${fmt(value)}`,
+    thorns: value => `冲刺撞敌免伤，每级球损失减免 +${fmt(value * 100)} 个百分点`,
+    bank: value => `每级交付质量折粮 +${pct(value)}，不加成背包`,
+    vitality: value => `每级最大生命 +${fmt(value)} 并回复等量生命`,
+  };
+  const permanentEffects = { shell: '最大生命', seed: '初始球质量', legs: '移动速度比例', insurance: '失败背包保留比例' };
+  $('systemSummary').replaceChildren(
+    summaryCard('12 项常驻局内卡', perkNames.map(([id, name]) => `${name} · 上限 ${v[`perk.${id}.max`]} 级；${effects[id](v[`perk.${id}.value`])}${['armor', 'thorns'].includes(id) ? `；球损失合计减免上限 ${pct(v['perk.armorCap'])}` : ''}。`)),
+    summaryCard('3 项即时卡 · 可重复获得', [`急救：立即回复 ${fmt(v['instant.heal'])} 生命，不超过最大生命。`, `余裕：倒计时 +${fmt(v['instant.clock'])} 秒，受 ${fmt(v['run.timeCap'])} 秒剩余上限限制，不延长 active 硬上限。`, `口粮：背包 +${fmt(v['instant.cash'])} 份，需交付或结算后入库。`, `普通采集每 ${v['run.draftEvery']} 次选卡，每次 ${v['run.draftChoices']} 张；初始重抽 ${v['run.rerolls']} 次。`]),
+    summaryCard('4 项巢穴永久升级', c.upgrades.map(upgrade => `${upgrade.name} · ${v[`upgrade.${upgrade.id}.max`]} 级；每级${permanentEffects[upgrade.id]} +${fmt(v[`upgrade.${upgrade.id}.value`])}；买满 ${fmt(upgrade.total, 0)} 口粮。`)),
+    summaryCard('3 项特质 · 后代门槛', traitNames.map(([id, name]) => `${name} · ${fmt(v[`trait.${id}.unlock`])} 后代解锁；速度 ×${fmt(v[`trait.${id}.speed`])}，生长 ×${fmt(v[`trait.${id}.growth`])}，生命 ${v[`trait.${id}.hp`] >= 0 ? '+' : ''}${v[`trait.${id}.hp`]}；最低最大生命 ${v['run.minHp']}。`)),
+    summaryCard('基因 · 首球起点', [`上限 ${v['gene.max']} 级，每级 ${v['gene.cost']} 基因；每级首球香气 +${v['gene.aromaPerLevel']}。`, '基因香气仅首球，交付后归零；不是每颗球自动续杯。本页采集测算按零基因计算。', `难度 0 胜利获得 ${v['settle.winGenes']} 基因、${v['settle.offspring']} 后代。`]),
+    summaryCard('难度与结算', [`难度上限 ${v['difficulty.max']}；每难度胜利口粮 +${v['settle.difficultyFood']}，基因 +${v['settle.difficultyGenes']}。`, `敌人追击每难度速度 +${v['enemy.difficultySpeed']}；鸟袭间隔每难度减少 ${v['bird.difficultyReduction']} 秒，最短 ${v['bird.minInterval']} 秒。`, `胜利基础口粮 ${v['settle.winFood']}；失败基础保留 ${pct(v['settle.failKeep'])}，撤退最低保留 ${pct(v['settle.retreatKeep'])}；已交付口粮不再损失。`, '长线测算固定难度 0，不将难度加成伪装成基准收益。'])
+  );
+}
+function refresh() {
+  const result = inspectDraft();
+  let changed = 0;
+  let pending = 0;
+  for (const field of fields) {
+    const view = rowViews.get(field.key);
+    const parsed = parseField(field, draft[field.key]);
+    const dirty = isChanged(field);
+    if (dirty) changed++;
+    if (parsed.error || parsed.value !== applied.values[field.key]) pending++;
+    if (view.input.value !== draft[field.key]) view.input.value = draft[field.key];
+    view.row.classList.toggle('is-changed', dirty);
+    view.row.classList.toggle('is-invalid', Boolean(parsed.error));
+    view.input.setAttribute('aria-invalid', String(Boolean(parsed.error)));
+    view.error.textContent = parsed.error || '';
+    view.reset.disabled = !dirty;
+  }
+  $('changedCount').textContent = String(changed);
+  $('pendingCount').textContent = pending ? `${pending} 项未入本页快照` : '草稿与本页快照一致';
+  $('revision').textContent = `draft revision ${result.ok ? revision(result.envelope.values) : '无效，未生成'} / applied ${revision(applied.values)}（${appliedLabel}，非游戏应用状态）/ 游戏实际 revision 未知`;
+  $('exportConfigBtn').disabled = !result.ok;
+  $('exportReportBtn').disabled = !result.ok;
+  filterRows();
+  if (!result.ok) {
+    ['metricPickups', 'metricDeliveries', 'metricTime', 'metricFood'].forEach(id => { $(id).textContent = '待修正'; });
+    $('metricPickupsNote').textContent = '存在非法值，已停止测算，不沿用旧结果';
+    ['experimentContent', 'achievementCards', 'systemSummary'].forEach(id => { $(id).replaceChildren(element('p', 'warning-box', `当前草稿无效，暂停摘要与测算：${result.error}`)); });
+    return result;
+  }
+  const v = result.envelope.values;
+  const c = calculate(v);
+  $('metricPickups').textContent = `${fmt(c.ordinary + c.gold, 0)} 次`;
+  $('metricPickupsNote').textContent = `普通 ${fmt(c.ordinary, 0)} + 金色 ${fmt(c.gold, 0)} · 采集者 / 零基因`;
+  $('metricDeliveries').textContent = `${fmt(c.deliveries, 0)} 次`;
+  $('metricTime').textContent = `${fmt(v['run.baseTime'])} 秒 / ${v['run.hardLimit'] === 0 ? '关闭' : `${fmt(v['run.hardLimit'])} 秒`}`;
+  $('metricFood').textContent = `${fmt(c.totalFood, 0)} 份`;
+  renderExperiments(v, c);
+  renderSystems(v, c);
+  return result;
+}
+function exportReport() {
+  const result = inspectDraft();
+  if (!result.ok) { message(`禁止导出汇总：${result.error}`, 'error'); return false; }
+  try {
+    const doc = document.implementation.createHTMLDocument('生命远征 · 数值汇总');
+    doc.documentElement.lang = 'zh-CN';
+    const charset = doc.createElement('meta');
+    charset.setAttribute('charset', 'UTF-8');
+    const viewport = doc.createElement('meta');
+    viewport.name = 'viewport';
+    viewport.content = 'width=device-width, initial-scale=1';
+    const style = doc.createElement('style');
+    style.textContent = 'body{font:14px/1.8 system-ui,sans-serif;background:#f6f4ec;color:#253b30;margin:24px auto;padding:0 20px;max-width:1300px}h1,h2,h3,h4{color:#234f3c}table{width:100%;border-collapse:collapse;margin:15px 0}td,th{border:1px solid #d6decc;padding:8px;text-align:left;vertical-align:top}th{background:#e7eee2}code{white-space:pre-wrap;overflow-wrap:anywhere}.formula{display:block;background:#e7eee2;padding:14px}article{background:#fffef9;padding:18px;margin:16px 0;border-radius:12px}.mini-scroll,.report-scroll{overflow-x:auto}.big-result{font-size:25px}.pill{margin-left:12px}.card-index{color:#805a30}';
+    doc.head.append(charset, viewport, style);
+    doc.body.append(element('h1', '', '生命远征 · 数值汇总'), element('p', '', `配置 revision：${revision(result.envelope.values)} · ${new Date().toLocaleString('zh-CN')} · 完整字段 ${fields.length} 项`), element('p', '', '这是当前合法草稿的静态报告，不是游戏已应用证明。估算无构筑、零永久升级、零基因、采集者、难度 0；非 Monte Carlo、非平衡验证。成就为 PLACEHOLDER 待试玩。'), element('h2', '', '节奏与长线实验'));
+    doc.body.append($('experimentContent').cloneNode(true), element('h2', '', '成就摘要'), $('achievementCards').cloneNode(true), element('h2', '', '系统与资源'), $('systemSummary').cloneNode(true), document.querySelector('.resource-note').cloneNode(true), element('h2', '', '全部配置字段'));
+    const table = miniTable(['key', '中文名', '当前值', '默认值', '单位', '范围', '说明与影响'], fields.map(field => [field.key, field.label, result.envelope.values[field.key], field.default, field.unit, `${field.min} – ${field.max}${field.integer ? ' 整数' : ''}`, `${field.help} ${field.impact}`]));
+    table.className = 'report-scroll';
+    doc.body.append(table);
+    download(new Blob(['<!doctype html>\n', doc.documentElement.outerHTML], { type: 'text/html;charset=utf-8' }), '生命远征-数值汇总.html');
+    message('已发起数值汇总 HTML 下载：包含全部字段、透明公式、系统和成就摘要。此报告不能代替配置 JSON 导入游戏。', 'success');
+    return true;
+  } catch (cause) { message(`汇总下载失败：${cause.message}。草稿未改变。`, 'error'); return false; }
+}
+
+buildRows();
+loadDraft();
+const initial = refresh();
+message(initial.ok ? '草稿已就绪。所有测算只针对本页草稿；校验、下载并在游戏营地导入后，才会影响新局。' : `已保留草稿中的非法输入：${initial.error}。请修正后再导出。`, initial.ok ? 'info' : 'error');
+$('searchInput').addEventListener('input', filterRows);
+$('onlyChanged').addEventListener('change', filterRows);
+$('validateBtn').addEventListener('click', validateDraft);
+$('exportConfigBtn').addEventListener('click', exportConfig);
+$('exportReportBtn').addEventListener('click', exportReport);
+$('importConfigInput').addEventListener('change', readImport);
+$('resetAllBtn').addEventListener('click', () => {
+  if (!window.confirm('恢复全部默认值？这会替换本页草稿，不会修改游戏；尚未下载的本页改动将丢失。')) return;
+  draft = Object.fromEntries(fields.map(field => [field.key, String(field.default)]));
+  mutation++;
+  saveDraft();
+  refresh();
+  message('草稿已恢复全部默认；applied 保持最近快照。请重新校验、下载，游戏配置不会自动改变。');
+});
+const tabs = [['fieldsTab', 'fieldsPanel'], ['experimentTab', 'experimentPanel'], ['systemsTab', 'systemsPanel']];
+function activateTab(id) {
+  tabs.forEach(([tabId, panelId]) => {
+    const active = tabId === id;
+    $(tabId).setAttribute('aria-selected', String(active));
+    $(tabId).tabIndex = active ? 0 : -1;
+    $(panelId).hidden = !active;
+  });
+}
+tabs.forEach(([id], index) => {
+  $(id).addEventListener('click', () => activateTab(id));
+  $(id).addEventListener('keydown', event => {
+    if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) return;
+    event.preventDefault();
+    const next = event.key === 'Home' ? 0 : event.key === 'End' ? tabs.length - 1 : (index + (event.key === 'ArrowRight' ? 1 : -1) + tabs.length) % tabs.length;
+    activateTab(tabs[next][0]);
+    $(tabs[next][0]).focus();
+  });
+});
+if (new URLSearchParams(window.location.search).get('test') === '1') {
+  window.__tuning = Object.freeze({
+    getDraft() {
+      return { format: 'dung-balance-1', version: 1, values: Object.fromEntries(fields.map(field => { const parsed = parseField(field, draft[field.key]); return [field.key, parsed.error ? draft[field.key] : parsed.value]; })) };
+    },
+    setValue,
+    validate: validateDraft,
+    importConfig,
+  });
+}
+</script>
+</body>
+</html>

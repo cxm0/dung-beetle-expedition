@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#f4f3e9">
+  <meta name="description" content="小小推球家·生命远征：微观肉鸽，滚动食物，储粮、求偶、育幼，让每一次远征留下传承。">
+  <title>小小推球家·生命远征</title>
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <svg class="svg-library" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><defs>
+    <symbol id="icon-beetle" viewBox="0 0 32 32"><path d="M11 9 8 5m13 4 3-4M8 14l-5-3m5 9-5 2m8 3-4 4m17-15 5-3m-5 9 5 2m-8 3 4 4"/><path d="M12 10V8a4 4 0 0 1 8 0v2M16 11v16"/><rect x="8" y="10" width="16" height="18" rx="8"/></symbol>
+    <symbol id="icon-arrow" viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6"/></symbol>
+    <symbol id="icon-leaf" viewBox="0 0 24 24"><path d="M20 4C9 2 3 7 5 14s15 7 15-10ZM4 21 15 10"/></symbol>
+    <symbol id="icon-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/><path d="M12 1v4m0 14v4M1 12h4m14 0h4"/></symbol>
+    <symbol id="icon-close" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></symbol>
+    <symbol id="icon-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+    <symbol id="icon-bolt" viewBox="0 0 24 24"><path d="m14 2-9 12h6l-1 8 9-13h-6z"/></symbol>
+    <symbol id="icon-jump" viewBox="0 0 24 24"><path d="M12 18V5m-5 5 5-5 5 5M5 20h14"/></symbol>
+    <symbol id="icon-compass" viewBox="0 0 24 24"><path d="m12 3 7 17-7-4-7 4z"/></symbol>
+    <symbol id="icon-spark" viewBox="0 0 24 24"><path d="m12 3 2.5 6.5L21 12l-6.5 2.5L12 21l-2.5-6.5L3 12l6.5-2.5z"/></symbol>
+  </defs></svg>
+
+  <div id="world" aria-label="屎壳郎草甸三维游戏场景"></div>
+  <div class="scene-vignette" aria-hidden="true"></div>
+  <div id="floatingLayer" aria-hidden="true"></div>
+
+  <header class="topbar">
+    <a class="brand" href="./index.html" aria-label="小小推球家·生命远征首页">
+      <span class="brand-mark"><svg class="icon"><use href="#icon-beetle"/></svg></span>
+      <span class="brand-word">DUNG<span class="brand-dot">.</span></span>
+      <span class="brand-chinese">小小推球家</span>
+    </a>
+    <div class="chapter"><span class="chapter-dot"></span><span>ROGUELITE</span><span class="chapter-divider">/</span><span>生命远征</span></div>
+    <nav class="top-tools" aria-label="游戏工具">
+      <button id="campBtn" class="tool-button camp-button" type="button" aria-haspopup="dialog" aria-controls="campModal"><svg class="icon"><use href="#icon-leaf"/></svg><span>我的巢穴</span></button>
+      <button id="soundBtn" class="tool-button" type="button" aria-label="切换游戏声音">声音</button>
+      <button id="qualityBtn" class="tool-button" type="button" aria-label="切换画质">画质</button>
+      <button id="pauseBtn" class="tool-button" type="button" aria-label="暂停游戏">暂停</button>
+    </nav>
+  </header>
+
+  <main id="home" class="home">
+    <section class="hero" aria-labelledby="heroTitle">
+      <div class="eyebrow"><span class="live-dot"></span>微观肉鸽 · 代代生息<span class="eyebrow-line"></span></div>
+      <h1 id="heroTitle">滚动食物。<br><span>延续生命。</span></h1>
+      <p class="hero-description">从一颗小球，到一个家族。<br>在有限的时间里，带回下一代的希望。</p>
+      <div class="hero-actions">
+        <button id="startBtn" class="button button-primary" type="button"><span>开启生命远征</span><svg class="icon"><use href="#icon-arrow"/></svg></button>
+        <button id="helpBtn" class="button button-quiet" type="button" aria-haspopup="dialog" aria-controls="helpModal"><span class="play-outline" aria-hidden="true"></span>怎么玩</button>
+      </div>
+      <div class="legacy-summary">
+        <div class="summary-heading"><svg class="icon"><use href="#icon-leaf"/></svg><span>我的巢穴 · 局外传承</span><small>当前浏览器存档</small></div>
+        <p id="metaSummary" role="status">持久粮食 0 · 后代 0</p>
+        <span class="summary-note">右上角「我的巢穴」：升级、特质与存档备份</span>
+      </div>
+      <div class="hero-footnote"><span class="fine-rule"></span>已入库的收获，永远是下一次启程的底气。</div>
+    </section>
+
+    <aside class="field-card home-mission" aria-label="生命远征三阶段任务">
+      <div class="card-topline"><span>THE LIFE EXPEDITION</span><span class="card-index">01 — 03</span></div>
+      <div class="mission-heading"><span class="mission-emblem"><svg class="icon"><use href="#icon-leaf"/></svg></span><div><span class="section-kicker">一场远征，三次成长</span><h2>把生活，滚向下一代。</h2></div></div>
+      <div class="mission-facts"><div><strong><b id="homeBaseTime">—</b><span> 秒</span></strong><small>基础倒计时</small></div><span class="fact-divider"></span><div><strong><b id="homeBaseHp">—</b><span> 生命</span></strong><small>基础生存机会</small></div></div>
+      <ol id="homeStages" class="home-stages"><li>阶段目标随当前配置载入。</li></ol>
+      <div class="run-pillars"><div><span>局内进化</span><p id="homeDraftRule">采集成长，选择进化；选择期间暂停时间。</p></div><div><span>局外传承</span><p>粮食升级巢穴，基因延续特质<br>让下一代从更好的起点出发</p></div></div>
+      <div class="card-bottom"><span class="tiny-dot"></span>达标后回到巢穴，按 E 或点击交付</div>
+    </aside>
+    <div class="scene-caption" aria-hidden="true"><span class="caption-cross">+</span><div>一次远征，一份传承<small>A SMALL WORLD. A LASTING LEGACY.</small></div></div>
+  </main>
+
+  <section id="hud" class="hud hidden" aria-label="游戏状态">
+    <div class="hud-stack">
+      <div class="hud-top">
+        <div class="stat-block timer-block"><svg class="icon"><use href="#icon-clock"/></svg><div><span class="stat-label">剩余时间</span><strong id="timer">—</strong></div></div>
+        <div class="stat-block"><div><span class="stat-label">远征积分</span><strong id="score">0</strong></div></div>
+        <div class="stat-block mass-block"><div><span class="stat-label">小球质量 <span class="unit">kg</span></span><strong id="mass">—</strong></div></div>
+        <div class="stamina-block"><div class="meter-label"><span><svg class="icon"><use href="#icon-bolt"/></svg>冲刺体力</span><span>ENERGY</span></div><div class="meter stamina-track"><div id="staminaFill" class="meter-fill stamina-fill" style="width:100%"></div></div></div>
+      </div>
+      <div class="hud-compact" aria-label="生存与环境">
+        <div class="compact-stat health-stat"><span>护甲 / 生命</span><strong id="healthText">—</strong></div>
+        <div class="compact-stat"><span>香气</span><strong id="aromaText">0</strong></div>
+        <div class="compact-stat"><span>背包</span><strong id="pocketText">0</strong></div>
+        <div class="compact-stat weather-stat"><span>天气 / 危险</span><strong id="runInfo">晴朗 · 留意周围</strong></div>
+      </div>
+      <div id="perkList" class="perk-list" aria-label="本局进化徽章" tabindex="0"><span class="perk-placeholder">局内进化 · 等待首次选择</span></div>
+    </div>
+    <div id="dangerBanner" class="danger-banner hidden" role="alert" aria-live="assertive">鸟袭预警 · 离开地面红圈！</div>
+    <aside class="field-card game-mission" aria-label="当前阶段目标">
+      <div class="card-topline"><span>LIFE EXPEDITION</span><svg class="icon"><use href="#icon-target"/></svg></div>
+      <div class="objective-heading"><h2 id="stageName">阶段 1 · 储粮</h2><span class="delivery-count"><strong id="delivered">0</strong><span> / <span id="deliveryTotal">—</span> 颗</span></span></div>
+      <div id="stageSteps" class="stage-steps" aria-label="三阶段进度"><span class="stage-step active" aria-current="step">1 储粮</span><span class="stage-step">2 求偶</span><span class="stage-step">3 育幼</span></div>
+      <p id="objective" class="objective-text">按当前阶段目标准备质量与香气，达标后回巢交付。</p>
+      <div class="target-label"><span>交付准备度</span><strong id="targetText">待载入</strong></div>
+      <div class="meter target-track"><div id="targetFill" class="meter-fill target-fill" style="width:0%"></div></div>
+      <div class="nest-direction"><span class="compass"><svg id="compassArrow" class="icon"><use href="#icon-compass"/></svg></span><div><strong>朝巢穴前进</strong><small>质量与香气达标后，按 E / 交付按钮</small></div></div>
+    </aside>
+    <button id="interactBtn" class="button button-primary interact-button hidden" type="button" aria-label="交付达标小球，快捷键 E"><kbd>E</kbd><span>交付小球</span><svg class="icon"><use href="#icon-arrow"/></svg></button>
+  </section>
+
+  <footer class="bottom-bar">
+    <div class="control-hints"><span class="hint"><span class="key-group"><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd></span>移动</span><span class="hint"><kbd class="wide-key">Shift</kbd>冲刺</span><span class="hint"><kbd class="wide-key">Space</kbd>跳跃</span><span class="hint"><kbd>E</kbd>交付</span><span class="hint esc-hint"><kbd>Esc</kbd>暂停</span></div>
+    <div class="bottom-note"><span class="live-dot"></span>为下一代，多滚一步<span class="note-number">GROW. ADAPT. PASS IT ON.</span></div>
+  </footer>
+
+  <div id="toast" class="toast hidden" role="status" aria-live="polite"></div>
+
+  <div id="mobileControls" class="mobile-controls hidden" aria-label="触屏游戏操作">
+    <div id="joystick" class="joystick" role="group" aria-label="拖动摇杆移动"><div class="joystick-guides" aria-hidden="true"></div><div id="stick" class="stick"><svg class="icon"><use href="#icon-target"/></svg></div></div>
+    <div class="mobile-actions"><button id="jumpBtn" class="touch-button jump-button" type="button" aria-label="跳跃"><svg class="icon"><use href="#icon-jump"/></svg><span>跳跃</span></button><button id="dashBtn" class="touch-button dash-button" type="button" aria-label="按住冲刺"><svg class="icon"><use href="#icon-bolt"/></svg><span>冲刺</span></button></div>
+  </div>
+
+  <div id="helpModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="helpTitle">
+    <section class="modal-panel help-panel">
+      <button id="helpClose" class="close-button" type="button" aria-label="关闭玩法说明"><svg class="icon"><use href="#icon-close"/></svg></button>
+      <div class="modal-eyebrow">A GUIDE TO LIFE</div><h2 id="helpTitle">生命远征指南</h2><p id="helpIntro" class="modal-intro">把食物带回家，把希望留给下一代。规则按当前配置显示。</p>
+      <div class="help-controls"><div><span><kbd>WASD</kbd> / <kbd>方向键</kbd></span><strong>移动</strong></div><div><kbd>Shift</kbd><strong>冲刺</strong></div><div><kbd>Space</kbd><strong>跳跃</strong></div><div><kbd>E</kbd><strong>巢穴交付</strong></div><div><kbd>Esc</kbd><strong>暂停</strong></div></div>
+      <ol id="helpDynamic" class="help-steps"><li><div><h3>规则载入中</h3><p>阶段目标、进化、结算和传承规则由当前数值配置生成。</p></div></li></ol>
+      <p class="help-touch-note">触屏游玩：拖动左侧摇杆移动，右侧按钮跳跃、冲刺。靠近巢穴时显示「交付小球」按钮，达标即可点击交付；桌面也可直接点击。</p>
+    </section>
+  </div>
+
+  <div id="pauseModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="pauseTitle">
+    <section class="modal-panel compact-panel">
+      <span class="modal-emblem"><svg class="icon"><use href="#icon-leaf"/></svg></span><div class="modal-eyebrow">TAKE A LITTLE BREATH</div><h2 id="pauseTitle">歇一歇，再出发。</h2><p class="modal-intro">继续为下一代冒险，或带着部分收获安全回家。<br>已入库粮食不受影响。</p>
+      <div class="modal-actions"><button id="resumeBtn" class="button button-primary" type="button">继续远征<svg class="icon"><use href="#icon-arrow"/></svg></button><button id="retreatBtn" class="button button-secondary retreat-button" type="button">安全撤离<span id="retreatKeepLabel">按当前撤离规则结算背包</span></button><button id="restartBtn" class="button button-quiet" type="button" aria-haspopup="dialog" aria-controls="abandonModal">放弃本局并重开</button></div>
+    </section>
+  </div>
+
+  <div id="campModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="campTitle">
+    <section class="modal-panel camp-panel">
+      <button id="campClose" class="close-button" type="button" aria-label="关闭我的巢穴"><svg class="icon"><use href="#icon-close"/></svg></button>
+      <div class="modal-eyebrow">THE NEST / PERMANENT LEGACY</div><h2 id="campTitle">我的巢穴</h2><p class="modal-intro">每一次带回的收获，都让下一次出发更有底气。</p>
+      <div id="campStats" class="camp-stats" aria-label="持久资源"><div><span>持久粮食</span><strong>0</strong></div><div><span>基因</span><strong>0</strong></div><div><span>后代</span><strong>0</strong></div></div>
+      <div class="camp-section-heading"><h3>巢穴升级</h3><span>局外成长 · 长久生效</span></div>
+      <div id="upgradeGrid" class="upgrade-grid"><p class="empty-state">巢穴升级项目由主层载入。仓库可提高失败时的背包保留率。</p></div>
+      <div class="camp-section-heading"><h3>传承特质</h3><span>为下一代准备起点</span></div>
+      <div id="traitGrid" class="trait-grid"><p class="empty-state">可选传承特质由主层载入。</p></div>
+      <div class="gene-upgrade"><div><h3>香气传承 <span id="geneLevelLabel" class="level-label">待载入</span></h3><p id="geneDescription">已购等级保留，实际效果按当前配置上限计算。</p></div><button id="geneUpgradeBtn" class="button button-secondary" type="button">升级传承</button></div>
+      <div class="difficulty-row"><label for="difficultySelect">远征难度<small>选好下一次生命远征的起点</small></label><select id="difficultySelect" name="difficulty"><option value="0">0 · 初始远征</option></select></div>
+      <section class="achievement-section" aria-labelledby="achievementTitle">
+        <div class="camp-section-heading"><h3 id="achievementTitle">家族成就</h3><span>达成后手动领取 · 仅局外</span></div>
+        <p class="save-notice">每项成就只奖励一次；调整或降低门槛不会重复发奖。成就统计与已领奖记录随玩家存档备份。</p>
+        <div id="achievementList" class="achievement-grid"><p class="empty-state">成就进度载入中。</p></div>
+      </section>
+      <section class="config-section" aria-labelledby="configTitle">
+        <div class="camp-section-heading"><h3 id="configTitle">数值配置</h3><a class="config-link" href="数值调参台.html" target="_blank" rel="noopener noreferrer">打开数值调参台 ↗</a></div>
+        <p class="save-notice">配置与玩家存档<strong>相互独立</strong>，仅在远征结束后可导入或恢复默认；不会重载页面或清空进度。旧升级已购等级保留，但效果按新上限计算；新初始赠粮<strong>只影响全新档</strong>。两类数据均按浏览器及站点隔离，不跨设备自动同步。调参台导出后，请在此导入应用。</p>
+        <div class="save-actions"><button id="configImportBtn" class="button button-secondary" type="button">导入配置 JSON</button><input id="configImportInput" class="hidden" type="file" accept=".json,application/json" hidden aria-label="选择完整数值配置 JSON"><button id="configExportBtn" class="button button-secondary" type="button">导出当前配置</button><button id="configResetBtn" class="button button-secondary" type="button">恢复默认配置</button></div>
+        <label class="difficulty-row" for="trialSeed">对照试玩种子（留空则随机）<input id="trialSeed" type="number" min="0" max="4294967295" step="1" placeholder="例如 71023" style="max-width:180px"></label>
+        <p class="save-notice">相同种子、相同初始存档和操作路线便于对比；改变资源数量会改变后续随机序列。种子只控制本次页面，不写入玩家存档。</p>
+        <p id="configStatus" class="save-status" role="status" aria-live="polite">配置状态与 revision 载入中。</p>
+      </section>
+      <section class="save-section" aria-label="本地存档与备份">
+        <div class="camp-section-heading"><h3>存档与备份</h3><span>仅当前浏览器</span></div>
+        <p class="save-notice">巢穴升级与特质保存在当前浏览器，<strong>不跨设备自动同步</strong>。请导出 JSON 备份；清除浏览器数据可能丢失进度。导入备份恢复会<strong>覆盖当前进度</strong>，游戏会在覆盖前再次确认。</p>
+        <div class="save-actions"><button id="exportSaveBtn" class="button button-secondary" type="button">导出存档备份</button><button id="importSaveBtn" class="button button-secondary" type="button">导入并恢复存档</button><input id="importSaveInput" class="hidden" type="file" accept=".json,application/json" hidden aria-label="选择 JSON 存档备份"></div>
+        <p id="saveStatus" class="save-status" role="status" aria-live="polite">存档状态由主层载入；建议在恢复前先导出当前备份。</p>
+      </section>
+      <section class="camp-log" aria-labelledby="logTitle"><div class="camp-section-heading"><h3 id="logTitle">巢穴手记</h3><span>最近结算 / 机制说明</span></div><ul id="logList" class="log-list"><li>已入库粮食安全；远征结算及机制说明将在此显示。</li></ul></section>
+    </section>
+  </div>
+
+  <div id="draftModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="draftTitle" aria-describedby="draftSubtitle draftHint">
+    <section class="modal-panel draft-panel">
+      <div class="modal-eyebrow">EVOLVE / CHOOSE ONE</div><div class="draft-heading"><h2 id="draftTitle">选择一次进化</h2><span class="pause-badge"><svg class="icon"><use href="#icon-clock"/></svg>时间已暂停</span></div>
+      <p id="draftSubtitle" class="modal-intro">一次选择，一次进化。让这一局长出自己的生存方式。</p>
+      <div id="draftCards" class="draft-cards" aria-label="选择本局进化"><div class="draft-placeholder">01<span>等待进化选项</span></div><div class="draft-placeholder">02<span>等待进化选项</span></div><div class="draft-placeholder">03<span>等待进化选项</span></div></div>
+      <div class="draft-footer"><p id="draftHint">进化选项与触发频率按当前配置显示，选择期间暂停时间。</p><button id="rerollBtn" class="button button-secondary" type="button">重掷选项</button></div>
+    </section>
+  </div>
+
+  <div id="abandonModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="abandonTitle" aria-describedby="abandonDescription">
+    <section class="modal-panel compact-panel">
+      <div class="modal-eyebrow">LEAVE THIS EXPEDITION?</div><h2 id="abandonTitle">确定放弃并重开？</h2><p id="abandonDescription" class="modal-intro">已入库粮食保留。本局背包按当前失败保留率结算，不享受安全撤离保障。</p>
+      <div class="modal-actions"><button id="abandonCancel" class="button button-primary" type="button">取消，保留本局</button><button id="abandonConfirm" class="button button-danger" type="button">确认放弃 · 按失败保留率结算并重开</button></div>
+    </section>
+  </div>
+
+  <div id="endModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="endTitle">
+    <section class="modal-panel compact-panel"><span class="modal-emblem end-emblem"><svg class="icon"><use href="#icon-spark"/></svg></span><div class="modal-eyebrow">EVERY LIFE LEAVES A LEGACY</div><h2 id="endTitle">这一程，留下了传承。</h2><div class="end-score"><span>本次远征积分</span><strong id="endScore">0</strong></div><div id="endStats" class="end-stats"></div><div class="modal-actions"><button id="againBtn" class="button button-primary" type="button">再启生命远征<svg class="icon"><use href="#icon-arrow"/></svg></button><button id="homeBtn" class="button button-secondary" type="button">回到首页</button></div></section>
+  </div>
+  <script type="module" src="./main.js"></script>
+</body>
+</html>
